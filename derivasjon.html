@@ -1622,12 +1622,12 @@ $$`;
             topics.forEach(topic => {
                 const stats = getTopicStats(topic);
                 // A topic is "struggling" if:
-                // - User has attempted at least 5 tasks AND
-                // - More than 40% are marked as 'practice' OR mastery rate < 50%
-                if (stats.attempted >= 5) {
+                // - User has attempted at least 3 tasks AND
+                // - More than 30% are marked as 'practice' OR mastery rate < 60%
+                if (stats.attempted >= 3) {
                     const practiceRate = stats.practice / stats.attempted;
                     const masteryRate = stats.mastered / stats.attempted;
-                    if (practiceRate > 0.4 || masteryRate < 0.5) {
+                    if (practiceRate > 0.3 || masteryRate < 0.6) {
                         struggling.push(topic);
                     }
                 }
@@ -1661,18 +1661,20 @@ $$`;
             const status = state.progress[problem.id];
             let weight = 1;
 
-            // Base weight adjustments for individual task status
-            if (status === 'practice') weight += 10;
-            if (status === 'mastered') weight = 0.1;
-
-            // Boost weight for recommended tasks from struggling topics
-            if (isRecommended(problem)) {
-                weight *= 2;
+            // Exclude already completed tasks (mastered or practice) from smart mix
+            // Users should only see new, unrated tasks
+            if (status === 'mastered' || status === 'practice') {
+                return 0;
             }
 
             // Reduce weight for recently shown tasks
             if (state.recentlyShown.includes(problem.id)) {
                 weight *= 0.1;
+            }
+
+            // Boost weight for recommended tasks from struggling topics
+            if (isRecommended(problem)) {
+                weight *= 3; // Higher boost to make recommended tasks more prominent
             }
 
             // Adaptive difficulty: adjust weight based on topic mastery and problem difficulty
