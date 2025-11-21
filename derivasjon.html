@@ -484,19 +484,549 @@
 
         const theoryData = {
             chain: {
-                no: { title: "Kjerneregelen", intro: "Derivasjon av sammensatte funksjoner.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Derivert ytre · Derivert kjerne", example: "Eks: $(2x+1)^2$" },
-                en: { title: "Chain Rule", intro: "Differentiation of composite functions.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Outer deriv · Inner deriv", example: "Ex: $(2x+1)^2$" },
-                es: { title: "Regla de la Cadena", intro: "Derivación de funciones compuestas.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Deriv externa · Deriv interna", example: "Ej: $(2x+1)^2$" }
+                no: {
+                    title: "Kjerneregelen",
+                    intro: "Kjerneregelen brukes når vi skal derivere sammensatte funksjoner - altså funksjoner inne i funksjoner.",
+                    formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$",
+                    ruleText: "Derivert ytre · Derivert kjerne",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 Når bruker du kjerneregelen?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Når du har en <strong>funksjon inne i en annen funksjon</strong></li>
+                                <li>Når du ser <strong>potenser av uttrykk</strong> som $(2x+1)^3$ eller $(x^2-5)^{10}$</li>
+                                <li>Når du har <strong>$e^{uttrykk}$</strong> eller <strong>$\\ln(uttrykk)$</strong> hvor "uttrykk" ikke bare er $x$</li>
+                                <li>Når du har <strong>$\\sqrt{uttrykk}$</strong> hvor uttrykket er mer enn bare $x$</li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Detaljert eksempel: $f(x) = (3x - 2)^4$</h4>
+
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 1: Identifiser ytre og indre funksjon</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• <strong>Ytre funksjon:</strong> $g(u) = u^4$ (noe i 4. potens)</p>
+                                        <p>• <strong>Indre funksjon (kjernen):</strong> $u(x) = 3x - 2$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 2: Deriver ytre funksjonen (la kjernen stå)</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$g'(u) = 4u^3 = 4(3x-2)^3$</p>
+                                        <p class="text-xs text-stone-500 italic mt-1">Bruker potensregelen: $(u^n)' = n \\cdot u^{n-1}$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 3: Deriver kjernen</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$u'(x) = 3$</p>
+                                        <p class="text-xs text-stone-500 italic mt-1">Deriverer $3x - 2$ ledd for ledd</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 4: Gang sammen (ytre · kjerne)</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = 4(3x-2)^3 \\cdot 3 = 12(3x-2)^3$$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Svar:</strong> $f'(x) = 12(3x-2)^3$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                en: {
+                    title: "Chain Rule",
+                    intro: "The chain rule is used when differentiating composite functions - functions within functions.",
+                    formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$",
+                    ruleText: "Outer deriv · Inner deriv",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 When to use the chain rule?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>When you have a <strong>function inside another function</strong></li>
+                                <li>When you see <strong>powers of expressions</strong> like $(2x+1)^3$</li>
+                                <li>When you have <strong>$e^{expression}$</strong> or <strong>$\\ln(expression)$</strong> where "expression" is not just $x$</li>
+                                <li>When you have <strong>$\\sqrt{expression}$</strong> where the expression is more than just $x$</li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Detailed example: $f(x) = (3x - 2)^4$</h4>
+
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 1: Identify outer and inner function</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• <strong>Outer function:</strong> $g(u) = u^4$</p>
+                                        <p>• <strong>Inner function:</strong> $u(x) = 3x - 2$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 2: Differentiate outer (leave inner unchanged)</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$g'(u) = 4u^3 = 4(3x-2)^3$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 3: Differentiate inner</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$u'(x) = 3$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 4: Multiply (outer · inner)</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = 4(3x-2)^3 \\cdot 3 = 12(3x-2)^3$$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Answer:</strong> $f'(x) = 12(3x-2)^3$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                es: {
+                    title: "Regla de la Cadena",
+                    intro: "La regla de la cadena se usa para derivar funciones compuestas - funciones dentro de funciones.",
+                    formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$",
+                    ruleText: "Deriv externa · Deriv interna",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 ¿Cuándo usar la regla de la cadena?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Cuando tienes una <strong>función dentro de otra función</strong></li>
+                                <li>Cuando ves <strong>potencias de expresiones</strong> como $(2x+1)^3$</li>
+                                <li>Cuando tienes <strong>$e^{expresión}$</strong> o <strong>$\\ln(expresión)$</strong></li>
+                                <li>Cuando tienes <strong>$\\sqrt{expresión}$</strong></li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Ejemplo detallado: $f(x) = (3x - 2)^4$</h4>
+
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Paso 1: Identificar función externa e interna</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• <strong>Función externa:</strong> $g(u) = u^4$</p>
+                                        <p>• <strong>Función interna:</strong> $u(x) = 3x - 2$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Paso 2: Derivar externa (dejar interna sin cambios)</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$g'(u) = 4u^3 = 4(3x-2)^3$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Paso 3: Derivar interna</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$u'(x) = 3$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Paso 4: Multiplicar</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = 4(3x-2)^3 \\cdot 3 = 12(3x-2)^3$$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Respuesta:</strong> $f'(x) = 12(3x-2)^3$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }
             },
             product: {
-                no: { title: "Produktregelen", intro: "Derivasjon av et produkt.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Eks: $x^2 e^x$" },
-                en: { title: "Product Rule", intro: "Differentiation of a product.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Ex: $x^2 e^x$" },
-                es: { title: "Regla del Producto", intro: "Derivada de un producto.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Ej: $x^2 e^x$" }
+                no: {
+                    title: "Produktregelen",
+                    intro: "Produktregelen brukes når vi skal derivere et produkt (ganging) av to funksjoner.",
+                    formula: "$$(u \\cdot v)' = u'v + uv'$$",
+                    ruleText: "u'v + uv'",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 Når bruker du produktregelen?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Når du har <strong>to funksjoner ganget sammen</strong>, for eksempel $x^2 \\cdot e^x$</li>
+                                <li>Når begge delene <strong>inneholder $x$</strong> og varierer (ikke konstanter)</li>
+                                <li>Når du har <strong>polynom ganget med eksponentialfunksjon</strong>: $x^3 \\cdot e^{2x}$</li>
+                                <li>Når du har <strong>polynom ganget med logaritme</strong>: $x^2 \\cdot \\ln(x)$</li>
+                                <li>Når du har <strong>trigonometriske funksjoner ganget med andre funksjoner</strong>: $x \\cdot \\sin(x)$</li>
+                            </ul>
+                            <div class="mt-3 p-3 bg-amber-50 border border-amber-200 rounded">
+                                <p class="text-sm text-amber-900"><strong>💡 Tips:</strong> Hvis bare én faktor inneholder $x$, trenger du ikke produktregelen!
+                                For eksempel: $(3x^2)' = 3 \\cdot 2x = 6x$ (konstanten 3 kan stå utenfor).</p>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Detaljert eksempel: $f(x) = x^2 \\cdot e^{3x}$</h4>
+
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 1: Identifiser de to funksjonene</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u = x^2$ (første faktor)</p>
+                                        <p>• $v = e^{3x}$ (andre faktor)</p>
+                                        <p class="text-xs text-stone-500 italic mt-2">Siden begge inneholder $x$, må vi bruke produktregelen!</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 2: Deriver hver funksjon for seg</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u' = 2x$ (potensregelen)</p>
+                                        <p>• $v' = 3e^{3x}$ (kjerneregelen på $e^{3x}$)</p>
+                                        <p class="text-xs text-stone-500 italic mt-2">Husk: $(e^{ax})' = a \\cdot e^{ax}$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 3: Bruk formelen $(u \\cdot v)' = u'v + uv'$</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = u'v + uv'$$</p>
+                                        <p>$$f'(x) = (2x)(e^{3x}) + (x^2)(3e^{3x})$$</p>
+                                        <p class="text-xs text-stone-500 italic mt-2">
+                                            Første ledd: $u'$ ganget med $v$ (original)<br>
+                                            Andre ledd: $u$ (original) ganget med $v'$
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 4: Forenkle (faktoriser hvis mulig)</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = 2xe^{3x} + 3x^2e^{3x}$$</p>
+                                        <p>$$f'(x) = e^{3x}(2x + 3x^2)$$</p>
+                                        <p>$$f'(x) = xe^{3x}(2 + 3x)$$</p>
+                                        <p class="text-xs text-stone-500 italic mt-2">Vi faktoriserer ut fellesfaktorer for et enklere svar</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Svar:</strong> $f'(x) = xe^{3x}(2 + 3x)$
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-100 mt-4">
+                            <h5 class="font-bold text-purple-900 mb-2">⚠️ Vanlige feil å unngå:</h5>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-purple-800">
+                                <li><strong>FEIL:</strong> $(x^2 \\cdot e^{3x})' = 2x \\cdot 3e^{3x}$ ❌ (Du kan ikke bare gange derivertene!)</li>
+                                <li><strong>RIKTIG:</strong> Du må bruke formelen $u'v + uv'$ ✅</li>
+                                <li>Husk å derivere <strong>begge</strong> funksjoner</li>
+                                <li>Glem ikke å ta med den <strong>originale</strong> funksjonen i hvert ledd</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                en: {
+                    title: "Product Rule",
+                    intro: "The product rule is used when differentiating a product of two functions.",
+                    formula: "$$(u \\cdot v)' = u'v + uv'$$",
+                    ruleText: "u'v + uv'",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 When to use the product rule?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>When you have <strong>two functions multiplied together</strong>, e.g., $x^2 \\cdot e^x$</li>
+                                <li>When both parts <strong>contain $x$</strong> (not constants)</li>
+                                <li>When you have <strong>polynomial times exponential</strong>: $x^3 \\cdot e^{2x}$</li>
+                                <li>When you have <strong>polynomial times logarithm</strong>: $x^2 \\cdot \\ln(x)$</li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Detailed example: $f(x) = x^2 \\cdot e^{3x}$</h4>
+
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 1: Identify the two functions</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u = x^2$</p>
+                                        <p>• $v = e^{3x}$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 2: Differentiate each function</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u' = 2x$</p>
+                                        <p>• $v' = 3e^{3x}$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 3: Apply formula $(u \\cdot v)' = u'v + uv'$</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = (2x)(e^{3x}) + (x^2)(3e^{3x})$$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 4: Simplify</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = xe^{3x}(2 + 3x)$$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Answer:</strong> $f'(x) = xe^{3x}(2 + 3x)$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                es: {
+                    title: "Regla del Producto",
+                    intro: "La regla del producto se usa para derivar el producto de dos funciones.",
+                    formula: "$$(u \\cdot v)' = u'v + uv'$$",
+                    ruleText: "u'v + uv'",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 ¿Cuándo usar la regla del producto?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Cuando tienes <strong>dos funciones multiplicadas</strong>, ej. $x^2 \\cdot e^x$</li>
+                                <li>Cuando ambas partes <strong>contienen $x$</strong></li>
+                                <li>Cuando tienes <strong>polinomio por exponencial</strong>: $x^3 \\cdot e^{2x}$</li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Ejemplo: $f(x) = x^2 \\cdot e^{3x}$</h4>
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200">
+                                    <strong class="text-emerald-800">✅ Respuesta:</strong> $f'(x) = xe^{3x}(2 + 3x)$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }
             },
             quotient: {
-                no: { title: "Brøkregelen", intro: "Derivasjon av brøk.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Eks: $x / (x+1)$" },
-                en: { title: "Quotient Rule", intro: "Differentiation of a fraction.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Ex: $x / (x+1)$" },
-                es: { title: "Regla del Cociente", intro: "Derivada de una fracción.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Ej: $x / (x+1)$" }
+                no: {
+                    title: "Brøkregelen",
+                    intro: "Brøkregelen brukes når vi skal derivere en brøk hvor både teller og nevner inneholder $x$.",
+                    formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$",
+                    ruleText: "(u'v - uv') / v²",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 Når bruker du brøkregelen?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Når du har en <strong>brøk</strong> hvor både teller og nevner inneholder $x$</li>
+                                <li>Når du har <strong>rasjonale funksjoner</strong> som $\\frac{x^2 + 1}{x - 3}$</li>
+                                <li>Når du har <strong>$\\frac{e^x}{x}$</strong> eller <strong>$\\frac{\\ln(x)}{x^2}$</strong></li>
+                            </ul>
+                            <div class="mt-3 p-3 bg-amber-50 border border-amber-200 rounded">
+                                <p class="text-sm text-amber-900"><strong>💡 Tips:</strong> Hvis bare telleren inneholder $x$, kan du ofte bruke enklere regler:
+                                <br>• $\\frac{x^2}{3} = \\frac{1}{3}x^2$ → bruk potensregelen
+                                <br>• Men $\\frac{x^2}{x+1}$ → bruk brøkregelen (begge har $x$)
+                                </p>
+                            </div>
+                            <div class="mt-3 p-3 bg-purple-50 border border-purple-200 rounded">
+                                <p class="text-sm text-purple-900"><strong>🎯 Huskeregel:</strong> "lo-d-hi minus hi-d-lo over lo-lo"
+                                <br>• <strong>lo</strong> (low) = nevner
+                                <br>• <strong>hi</strong> (high) = teller
+                                <br>• <strong>d</strong> = derivert
+                                <br>Altså: (nevner · teller') - (teller · nevner') delt på nevner²
+                                </p>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Detaljert eksempel: $f(x) = \\frac{x^2 + 1}{2x - 3}$</h4>
+
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 1: Identifiser teller og nevner</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u = x^2 + 1$ (teller)</p>
+                                        <p>• $v = 2x - 3$ (nevner)</p>
+                                        <p class="text-xs text-stone-500 italic mt-2">Siden begge inneholder $x$, må vi bruke brøkregelen!</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 2: Deriver teller og nevner hver for seg</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u' = 2x$ (deriverer $x^2 + 1$ ledd for ledd)</p>
+                                        <p>• $v' = 2$ (deriverer $2x - 3$)</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 3: Bruk formelen $\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = \\frac{u'v - uv'}{v^2}$$</p>
+                                        <p class="mt-2">Setter inn:</p>
+                                        <p>$$f'(x) = \\frac{(2x)(2x-3) - (x^2+1)(2)}{(2x-3)^2}$$</p>
+                                        <p class="text-xs text-stone-500 italic mt-2">
+                                            Teller: (derivert teller · original nevner) - (original teller · derivert nevner)<br>
+                                            Nevner: (original nevner)²
+                                        </p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 4: Forenkle telleren</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p class="mb-2">Gang ut i telleren:</p>
+                                        <p>$2x(2x-3) = 4x^2 - 6x$</p>
+                                        <p>$(x^2+1)(2) = 2x^2 + 2$</p>
+                                        <p class="mt-2">Trekk fra:</p>
+                                        <p>$(4x^2 - 6x) - (2x^2 + 2)$</p>
+                                        <p>$= 4x^2 - 6x - 2x^2 - 2$</p>
+                                        <p>$= 2x^2 - 6x - 2$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Steg 5: Skriv ferdig svar</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$$</p>
+                                        <p class="text-xs text-stone-500 italic mt-2">Vi kan også faktorisere teller hvis ønskelig: $\\frac{2(x^2 - 3x - 1)}{(2x-3)^2}$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Svar:</strong> $f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="bg-purple-50 p-4 rounded-lg border border-purple-100 mt-4">
+                            <h5 class="font-bold text-purple-900 mb-2">⚠️ Vanlige feil å unngå:</h5>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-purple-800">
+                                <li><strong>FEIL:</strong> $\\left(\\frac{u}{v}\\right)' = \\frac{u'}{v'}$ ❌ (Du kan ikke bare derivere teller og nevner hver for seg!)</li>
+                                <li><strong>FEIL:</strong> Glemme minustegnet: Det er $u'v - uv'$ (ikke pluss!)</li>
+                                <li><strong>FEIL:</strong> Glemme å kvadrere nevneren: Det er $v^2$ ikke bare $v$</li>
+                                <li><strong>RIKTIG:</strong> Bruk formelen nøyaktig: $\\frac{u'v - uv'}{v^2}$ ✅</li>
+                                <li>Vær <strong>ekstra nøye</strong> med parenteser når du regner ut $(uv')$</li>
+                            </ul>
+                        </div>
+
+                        <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 mt-4">
+                            <h5 class="font-bold text-blue-900 mb-2">💡 Alternativ: Når kan du unngå brøkregelen?</h5>
+                            <p class="text-sm text-blue-800 mb-2">Noen ganger kan du omskrive brøken for å slippe brøkregelen:</p>
+                            <ul class="list-disc list-inside space-y-1 text-sm text-blue-800">
+                                <li>$\\frac{1}{x^2} = x^{-2}$ → bruk potensregelen: $(x^{-2})' = -2x^{-3}$</li>
+                                <li>$\\frac{x^3}{x} = x^2$ → forenkle først, så deriver: $(x^2)' = 2x$</li>
+                                <li>$\\frac{\\sqrt{x}}{x} = \\frac{x^{1/2}}{x} = x^{-1/2}$ → bruk potensregelen</li>
+                            </ul>
+                        </div>
+                    `
+                },
+                en: {
+                    title: "Quotient Rule",
+                    intro: "The quotient rule is used when differentiating a fraction where both numerator and denominator contain $x$.",
+                    formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$",
+                    ruleText: "(u'v - uv') / v²",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 When to use the quotient rule?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>When you have a <strong>fraction</strong> where both numerator and denominator contain $x$</li>
+                                <li>When you have <strong>rational functions</strong> like $\\frac{x^2 + 1}{x - 3}$</li>
+                                <li>When you have <strong>$\\frac{e^x}{x}$</strong> or <strong>$\\frac{\\ln(x)}{x^2}$</strong></li>
+                            </ul>
+                            <div class="mt-3 p-3 bg-purple-50 border border-purple-200 rounded">
+                                <p class="text-sm text-purple-900"><strong>🎯 Memory aid:</strong> "lo-d-hi minus hi-d-lo over lo-lo"
+                                <br>• <strong>lo</strong> = denominator (bottom)
+                                <br>• <strong>hi</strong> = numerator (top)
+                                <br>• <strong>d</strong> = derivative
+                                </p>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Detailed example: $f(x) = \\frac{x^2 + 1}{2x - 3}$</h4>
+
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 1: Identify numerator and denominator</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u = x^2 + 1$ (numerator)</p>
+                                        <p>• $v = 2x - 3$ (denominator)</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 2: Differentiate each</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u' = 2x$</p>
+                                        <p>• $v' = 2$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 3: Apply formula</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = \\frac{(2x)(2x-3) - (x^2+1)(2)}{(2x-3)^2}$$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Step 4: Simplify</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$$</p>
+                                    </div>
+                                </div>
+
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Answer:</strong> $f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                es: {
+                    title: "Regla del Cociente",
+                    intro: "La regla del cociente se usa para derivar una fracción donde numerador y denominador contienen $x$.",
+                    formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$",
+                    ruleText: "(u'v - uv') / v²",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 ¿Cuándo usar?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Cuando tienes una <strong>fracción</strong> con $x$ en numerador y denominador</li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Ejemplo: $f(x) = \\frac{x^2 + 1}{2x - 3}$</h4>
+                            <div class="bg-emerald-50 p-3 rounded border border-emerald-200">
+                                <strong class="text-emerald-800">✅ Respuesta:</strong> $f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$
+                            </div>
+                        </div>
+                    `
+                }
             }
         };
 
@@ -890,28 +1420,27 @@ $$`;
             if (sel && sel.value) {
                 topic = sel.value;
             }
-            
+
             // Ensure we have a valid topic context
             if (!theoryData[topic]) topic = 'chain';
 
             const content = theoryData[topic][state.language];
             const container = document.getElementById('theory-content');
-            
+
             container.innerHTML = `
                 <h3 class="text-xl font-bold text-stone-800 mb-4">${content.title}</h3>
                 <p class="text-stone-600 mb-6 leading-relaxed">${content.intro}</p>
-                
+
                 <div class="bg-blue-50 border border-blue-100 p-6 rounded-lg mb-6 text-center overflow-x-auto">
                     <span class="text-xs font-bold text-blue-400 uppercase tracking-wider mb-2 block">${i18n[state.language].theory_formula}</span>
                     <div class="text-lg text-stone-800 font-serif whitespace-nowrap">${content.formula}</div>
                 </div>
-                
+
                 <p class="text-stone-500 italic text-center mb-8 border-l-4 border-stone-200 pl-4">${content.ruleText}</p>
-                
-                <div class="bg-stone-50 p-4 rounded-lg border border-stone-100">
-                    <span class="font-bold text-stone-700">Eksempel:</span> 
-                    <span class="text-stone-600 ml-2 font-serif">${content.example}</span>
-                </div>
+
+                ${content.whenToUse || ''}
+
+                ${content.detailedExample || ''}
             `;
             if(window.MathJax) MathJax.typeset();
         }
