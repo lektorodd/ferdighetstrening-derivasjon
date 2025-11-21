@@ -74,6 +74,7 @@
                 <button onclick="setLanguage('no')" id="btn-no" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇳🇴</button>
                 <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇬🇧</button>
                 <button onclick="setLanguage('es')" id="btn-es" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇪🇸</button>
+                <button onclick="setLanguage('uk')" id="btn-uk" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇺🇦</button>
             </div>
         </div>
     </header>
@@ -479,6 +480,60 @@
                 help_mix_desc: "El algoritmo aprende de ti, priorizando lo que necesitas practicar.",
                 help_stats_title: "Estadísticas",
                 help_stats_desc: "Rastrea tu dominio por tema y nivel."
+            },
+            uk: {
+                nav_dashboard: "Огляд",
+                nav_theory: "Банк теорії",
+                nav_practice: "Арена практики",
+                nav_stats: "Моя статистика",
+                nav_help: "Допомога",
+                dash_welcome: "Ласкаво просимо!",
+                dash_subtitle: "Що будемо практикувати сьогодні?",
+                dash_focus_header: "Фокусоване тренування",
+                dash_focus_desc: "Виберіть правило, рівень і тип самостійно.",
+                mode_mix_title: "Розумний мікс",
+                mode_mix_desc: "Алгоритм знаходить ваші слабкі місця.",
+                topic_chain: "Правило ланцюга",
+                topic_product: "Правило добутку",
+                topic_quotient: "Правило частки",
+                btn_start_focus: "Перейти до Фокусу",
+                btn_start_mix: "Почати тренування",
+                btn_solution: "Показати відповідь",
+                btn_hide: "Приховати відповідь",
+                btn_mastered: "Зрозуміло!",
+                btn_practice: "Потрібна практика",
+                chart_mastered: "Опановано",
+                chart_practice: "Потребує роботи",
+                chart_pending: "Не розпочато",
+                theory_formula: "Формула",
+                theory_explanation: "Пояснення",
+                practice_subtitle_mix: "Розумний мікс - адаптивний",
+                btn_hint: "Підказка",
+                btn_hide_hint: "Приховати підказку",
+                label_mix: "???",
+                hint_title: "Швидка підказка",
+                label_recommended: "Рекомендовано",
+                btn_new_mix: "Спробувати 5 нових завдань",
+                mix_end_text: "Закінчили з цим набором?",
+                stat_total_attempted: "Виконано",
+                stat_mastery_rate: "Рівень опанування",
+                stat_hint_usage: "Використання підказок",
+                stat_chart_total: "Прогрес",
+                stat_chart_topic: "Навички за темою",
+                stat_chart_level: "Навички за рівнем",
+                filter_rule: "Правило",
+                filter_levels: "Рівні",
+                filter_types: "Математична область",
+                btn_draw_focus: "Вибрати 5 задач",
+                focus_end_text: "Хочете більше таких самих?",
+                btn_new_focus: "Вибрати 5 нових (ті самі фільтри)",
+                help_title: "Допомога та інформація",
+                help_focus_title: "Фокусоване тренування",
+                help_focus_desc: "Налаштуйте свій сеанс. Виберіть правило, рівень і тип. Система генерує унікальні задачі щоразу.",
+                help_mix_title: "Розумний мікс",
+                help_mix_desc: "Алгоритм вчиться на ваших відповідях, надаючи пріоритет завданням, які вам потрібно практикувати.",
+                help_stats_title: "Статистика",
+                help_stats_desc: "Відстежуйте своє опанування за темами та рівнями складності."
             }
         };
 
@@ -486,17 +541,20 @@
             chain: {
                 no: { title: "Kjerneregelen", intro: "Derivasjon av sammensatte funksjoner.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Derivert ytre · Derivert kjerne", example: "Eks: $(2x+1)^2$" },
                 en: { title: "Chain Rule", intro: "Differentiation of composite functions.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Outer deriv · Inner deriv", example: "Ex: $(2x+1)^2$" },
-                es: { title: "Regla de la Cadena", intro: "Derivación de funciones compuestas.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Deriv externa · Deriv interna", example: "Ej: $(2x+1)^2$" }
+                es: { title: "Regla de la Cadena", intro: "Derivación de funciones compuestas.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Deriv externa · Deriv interna", example: "Ej: $(2x+1)^2$" },
+                uk: { title: "Правило ланцюга", intro: "Диференціювання складених функцій.", formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$", ruleText: "Зовнішня похідна · Внутрішня похідна", example: "Приклад: $(2x+1)^2$" }
             },
             product: {
                 no: { title: "Produktregelen", intro: "Derivasjon av et produkt.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Eks: $x^2 e^x$" },
                 en: { title: "Product Rule", intro: "Differentiation of a product.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Ex: $x^2 e^x$" },
-                es: { title: "Regla del Producto", intro: "Derivada de un producto.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Ej: $x^2 e^x$" }
+                es: { title: "Regla del Producto", intro: "Derivada de un producto.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Ej: $x^2 e^x$" },
+                uk: { title: "Правило добутку", intro: "Диференціювання добутку.", formula: "$$(u \\cdot v)' = u'v + uv'$$", ruleText: "u'v + uv'", example: "Приклад: $x^2 e^x$" }
             },
             quotient: {
                 no: { title: "Brøkregelen", intro: "Derivasjon av brøk.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Eks: $x / (x+1)$" },
                 en: { title: "Quotient Rule", intro: "Differentiation of a fraction.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Ex: $x / (x+1)$" },
-                es: { title: "Regla del Cociente", intro: "Derivada de una fracción.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Ej: $x / (x+1)$" }
+                es: { title: "Regla del Cociente", intro: "Derivada de una fracción.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Ej: $x / (x+1)$" },
+                uk: { title: "Правило частки", intro: "Диференціювання дробу.", formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$", ruleText: "(u'v - uv') / v²", example: "Приклад: $x / (x+1)$" }
             }
         };
 
