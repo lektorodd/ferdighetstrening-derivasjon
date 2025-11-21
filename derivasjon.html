@@ -272,6 +272,13 @@
                         <h3 class="font-semibold text-stone-800 mb-4 text-center" data-key="stat_chart_total">Total Oversikt</h3>
                         <div class="chart-wrapper"><canvas id="masteryChart"></canvas></div>
                     </div>
+
+                    <!-- Clear Progress Button -->
+                    <div class="mt-8 text-center">
+                        <button onclick="clearProgress()" class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
+                            <i class="fa-solid fa-trash-can mr-2"></i><span data-key="btn_clear_progress">Nullstill Fremgang</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -372,7 +379,9 @@
                 help_mix_title: "Smart Miks",
                 help_mix_desc: "Algoritmen lærer av dine svar. Den gir deg oppgaver du trenger å øve mer på, samt en god blanding av repetisjon.",
                 help_stats_title: "Statistikk",
-                help_stats_desc: "Få oversikt over fremgangen din fordelt på emne og vanskelighetsgrad."
+                help_stats_desc: "Få oversikt over fremgangen din fordelt på emne og vanskelighetsgrad.",
+                btn_clear_progress: "Nullstill Fremgang",
+                clear_confirm: "Er du sikker på at du vil slette all fremgang? Dette kan ikke angres."
             },
             en: {
                 nav_dashboard: "Dashboard",
@@ -426,7 +435,9 @@
                 help_mix_title: "Smart Mix",
                 help_mix_desc: "The algorithm learns from you, prioritizing tasks you need to practice.",
                 help_stats_title: "Statistics",
-                help_stats_desc: "Track your mastery across topics and difficulty levels."
+                help_stats_desc: "Track your mastery across topics and difficulty levels.",
+                btn_clear_progress: "Clear Progress",
+                clear_confirm: "Are you sure you want to delete all progress? This cannot be undone."
             },
             es: {
                 nav_dashboard: "Tablero",
@@ -480,7 +491,9 @@
                 help_mix_title: "Mezcla Inteligente",
                 help_mix_desc: "El algoritmo aprende de ti, priorizando lo que necesitas practicar.",
                 help_stats_title: "Estadísticas",
-                help_stats_desc: "Rastrea tu dominio por tema y nivel."
+                help_stats_desc: "Rastrea tu dominio por tema y nivel.",
+                btn_clear_progress: "Borrar Progreso",
+                clear_confirm: "¿Estás seguro de que quieres eliminar todo el progreso? Esto no se puede deshacer."
             },
             uk: {
                 nav_dashboard: "Огляд",
@@ -534,7 +547,9 @@
                 help_mix_title: "Розумний Мікс",
                 help_mix_desc: "Алгоритм навчається на ваших відповідях, пріоритизуючи завдання, які вам потрібно практикувати.",
                 help_stats_title: "Статистика",
-                help_stats_desc: "Відстежуйте свою майстерність за темами та рівнями складності."
+                help_stats_desc: "Відстежуйте свою майстерність за темами та рівнями складності.",
+                btn_clear_progress: "Очистити Прогрес",
+                clear_confirm: "Ви впевнені, що хочете видалити весь прогрес? Це не можна скасувати."
             }
         };
 
@@ -1879,6 +1894,32 @@ $$`;
             state.progress[id] = status;
             localStorage.setItem('mathTrainerProgress', JSON.stringify(state.progress));
             renderProblems();
+        }
+
+        function clearProgress() {
+            const texts = i18n[state.language];
+            if (confirm(texts.clear_confirm)) {
+                // Clear all progress data from state
+                state.progress = {};
+                state.hints = [];
+                state.recentlyShown = [];
+                state.activeProblems = [];
+
+                // Clear all localStorage items
+                localStorage.removeItem('mathTrainerProgress');
+                localStorage.removeItem('mathTrainerHints');
+                localStorage.removeItem('mathTrainerRecentlyShown');
+
+                // Update all views
+                updateChartData();
+                renderProblems();
+
+                // Show success message
+                alert('✓ ' + (state.language === 'no' ? 'All fremgang er slettet' :
+                              state.language === 'en' ? 'All progress has been cleared' :
+                              state.language === 'es' ? 'Todo el progreso ha sido eliminado' :
+                              'Весь прогрес видалено'));
+            }
         }
 
         function setLanguage(lang) {
