@@ -74,6 +74,7 @@
                 <button onclick="setLanguage('no')" id="btn-no" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇳🇴</button>
                 <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇬🇧</button>
                 <button onclick="setLanguage('es')" id="btn-es" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇪🇸</button>
+                <button onclick="setLanguage('uk')" id="btn-uk" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇺🇦</button>
             </div>
         </div>
     </header>
@@ -656,6 +657,58 @@
                             </div>
                         </div>
                     `
+                },
+                uk: {
+                    title: "Правило ланцюга",
+                    intro: "Правило ланцюга використовується при диференціюванні складених функцій - функцій всередині функцій.",
+                    formula: "$$f(x) = g(u(x)) \\implies f'(x) = g'(u) \\cdot u'(x)$$",
+                    ruleText: "Зовнішня похідна · Внутрішня похідна",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 Коли використовувати правило ланцюга?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Коли у вас <strong>функція всередині іншої функції</strong></li>
+                                <li>Коли ви бачите <strong>степені виразів</strong> як $(2x+1)^3$</li>
+                                <li>Коли у вас <strong>$e^{вираз}$</strong> або <strong>$\\ln(вираз)$</strong></li>
+                                <li>Коли у вас <strong>$\\sqrt{вираз}$</strong></li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Детальний приклад: $f(x) = (3x - 2)^4$</h4>
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 1: Визначити зовнішню і внутрішню функції</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• <strong>Зовнішня функція:</strong> $g(u) = u^4$</p>
+                                        <p>• <strong>Внутрішня функція:</strong> $u(x) = 3x - 2$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 2: Похідна зовнішньої (залишити внутрішню без змін)</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$g'(u) = 4u^3 = 4(3x-2)^3$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 3: Похідна внутрішньої</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$u'(x) = 3$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 4: Помножити</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = 4(3x-2)^3 \\cdot 3 = 12(3x-2)^3$$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200 mt-3">
+                                    <strong class="text-emerald-800">✅ Відповідь:</strong> $f'(x) = 12(3x-2)^3$
+                                </div>
+                            </div>
+                        </div>
+                    `
                 }
             },
             product: {
@@ -821,6 +874,58 @@
                             <div class="space-y-3 text-sm text-stone-700">
                                 <div class="bg-emerald-50 p-3 rounded border border-emerald-200">
                                     <strong class="text-emerald-800">✅ Respuesta:</strong> $f'(x) = xe^{3x}(2 + 3x)$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                uk: {
+                    title: "Правило добутку",
+                    intro: "Правило добутку використовується при диференціюванні добутку двох функцій.",
+                    formula: "$$(u \\cdot v)' = u'v + uv'$$",
+                    ruleText: "u'v + uv'",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 Коли використовувати правило добутку?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Коли у вас <strong>дві функції помножені разом</strong>, напр. $x^2 \\cdot e^x$</li>
+                                <li>Коли обидві частини <strong>містять $x$</strong></li>
+                                <li>Коли у вас <strong>поліном помножений на експоненту</strong>: $x^3 \\cdot e^{2x}$</li>
+                            </ul>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Приклад: $f(x) = x^2 \\cdot e^{3x}$</h4>
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 1: Визначити дві функції</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u = x^2$</p>
+                                        <p>• $v = e^{3x}$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 2: Знайти похідні</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u' = 2x$</p>
+                                        <p>• $v' = 3e^{3x}$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 3: Застосувати формулу</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = (2x)(e^{3x}) + (x^2)(3e^{3x})$$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 4: Спростити</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = xe^{3x}(2 + 3x)$$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200">
+                                    <strong class="text-emerald-800">✅ Відповідь:</strong> $f'(x) = xe^{3x}(2 + 3x)$
                                 </div>
                             </div>
                         </div>
@@ -1023,6 +1128,61 @@
                             <h4 class="font-bold text-blue-900 mb-3">🔍 Ejemplo: $f(x) = \\frac{x^2 + 1}{2x - 3}$</h4>
                             <div class="bg-emerald-50 p-3 rounded border border-emerald-200">
                                 <strong class="text-emerald-800">✅ Respuesta:</strong> $f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$
+                            </div>
+                        </div>
+                    `
+                },
+                uk: {
+                    title: "Правило частки",
+                    intro: "Правило частки використовується при диференціюванні дробу, де чисельник і знаменник містять $x$.",
+                    formula: "$$\\left(\\frac{u}{v}\\right)' = \\frac{u'v - uv'}{v^2}$$",
+                    ruleText: "(u'v - uv') / v²",
+                    whenToUse: `
+                        <div class="mb-4">
+                            <h4 class="font-bold text-stone-700 mb-2">📌 Коли використовувати правило частки?</h4>
+                            <ul class="list-disc list-inside space-y-1 text-stone-600">
+                                <li>Коли у вас <strong>дріб</strong> де чисельник і знаменник містять $x$</li>
+                                <li>Коли у вас <strong>раціональні функції</strong> як $\\frac{x^2 + 1}{x - 3}$</li>
+                                <li>Коли у вас <strong>$\\frac{e^x}{x}$</strong> або <strong>$\\frac{\\ln(x)}{x^2}$</strong></li>
+                            </ul>
+                            <div class="mt-3 p-3 bg-purple-50 border border-purple-200 rounded">
+                                <p class="text-sm text-purple-900"><strong>🎯 Підказка:</strong> "знаменник-похідна-чисельник мінус чисельник-похідна-знаменник, все поділене на знаменник-квадрат"</p>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-blue-50/50 p-4 rounded-lg border border-blue-100 mb-4">
+                            <h4 class="font-bold text-blue-900 mb-3">🔍 Приклад: $f(x) = \\frac{x^2 + 1}{2x - 3}$</h4>
+                            <div class="space-y-3 text-sm text-stone-700">
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 1: Визначити чисельник і знаменник</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u = x^2 + 1$ (чисельник)</p>
+                                        <p>• $v = 2x - 3$ (знаменник)</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 2: Знайти похідні</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>• $u' = 2x$</p>
+                                        <p>• $v' = 2$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 3: Застосувати формулу</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = \\frac{(2x)(2x-3) - (x^2+1)(2)}{(2x-3)^2}$$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-white p-3 rounded border border-blue-100">
+                                    <strong class="text-blue-700">Крок 4: Спростити</strong>
+                                    <div class="mt-2 ml-4">
+                                        <p>$$f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$$</p>
+                                    </div>
+                                </div>
+                                <div class="bg-emerald-50 p-3 rounded border border-emerald-200">
+                                    <strong class="text-emerald-800">✅ Відповідь:</strong> $f'(x) = \\frac{2x^2 - 6x - 2}{(2x-3)^2}$
+                                </div>
                             </div>
                         </div>
                     `
