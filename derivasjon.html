@@ -308,9 +308,10 @@
             currentView: 'dashboard',
             language: 'no',
             activeTopic: 'chain',
-            mode: 'focus', 
+            mode: 'focus',
             progress: JSON.parse(localStorage.getItem('mathTrainerProgress')) || {},
             hints: JSON.parse(localStorage.getItem('mathTrainerHints')) || [],
+            recentlyShown: JSON.parse(localStorage.getItem('mathTrainerRecentlyShown')) || [],
             activeProblems: [],
             filters: {
                 levels: [1, 2, 3, 4, 5],
@@ -1588,21 +1589,125 @@ $$`;
             renderProblems();
         }
 
+        // Helper function to get topic statistics
+        function getTopicStats(topic) {
+            let mastered = 0;
+            let practice = 0;
+            let total = 0;
+
+            problemBank.forEach(p => {
+                if (p.topic === topic) {
+                    total++;
+                    const status = state.progress[p.id];
+                    if (status === 'mastered') mastered++;
+                    if (status === 'practice') practice++;
+                }
+            });
+
+            return { mastered, practice, total, attempted: mastered + practice };
+        }
+
+        // Helper function to get mastery level for a topic (0-1 scale)
+        function getTopicMasteryLevel(topic) {
+            const stats = getTopicStats(topic);
+            if (stats.attempted === 0) return 0;
+            return stats.mastered / stats.attempted;
+        }
+
+        // Helper function to identify struggling topics
+        function getStrugglingTopics() {
+            const topics = ['chain', 'product', 'quotient'];
+            const struggling = [];
+
+            topics.forEach(topic => {
+                const stats = getTopicStats(topic);
+                // A topic is "struggling" if:
+                // - User has attempted at least 5 tasks AND
+                // - More than 40% are marked as 'practice' OR mastery rate < 50%
+                if (stats.attempted >= 5) {
+                    const practiceRate = stats.practice / stats.attempted;
+                    const masteryRate = stats.mastered / stats.attempted;
+                    if (practiceRate > 0.4 || masteryRate < 0.5) {
+                        struggling.push(topic);
+                    }
+                }
+            });
+
+            return struggling;
+        }
+
+        // Helper function to check if a problem is recommended
+        function isRecommended(problem) {
+            const strugglingTopics = getStrugglingTopics();
+            return strugglingTopics.includes(problem.topic);
+        }
+
+        // Helper function to get preferred difficulty for a topic
+        function getPreferredDifficultyForTopic(topic) {
+            const stats = getTopicStats(topic);
+            if (stats.attempted < 3) return 1; // Start easy for new topics
+
+            const masteryRate = stats.mastered / stats.attempted;
+
+            // If mastery is high (>70%), prefer higher difficulty
+            if (masteryRate > 0.7) return 3;
+            // If mastery is medium (40-70%), prefer medium difficulty
+            if (masteryRate > 0.4) return 2;
+            // If struggling (<40%), prefer lower difficulty
+            return 1;
+        }
+
         function getProblemWeight(problem) {
             const status = state.progress[problem.id];
             let weight = 1;
+
+            // Base weight adjustments for individual task status
             if (status === 'practice') weight += 10;
             if (status === 'mastered') weight = 0.1;
+
+            // Boost weight for recommended tasks from struggling topics
+            if (isRecommended(problem)) {
+                weight *= 2;
+            }
+
+            // Reduce weight for recently shown tasks
+            if (state.recentlyShown.includes(problem.id)) {
+                weight *= 0.1;
+            }
+
+            // Adaptive difficulty: adjust weight based on topic mastery and problem difficulty
+            const preferredDifficulty = getPreferredDifficultyForTopic(problem.topic);
+            const difficultyDiff = Math.abs(problem.level - preferredDifficulty);
+
+            // Reduce weight if difficulty is far from preferred level
+            if (difficultyDiff > 1) {
+                weight *= 0.5;
+            }
+
             return weight;
         }
 
         function updateProblemSet() {
             if (state.mode === 'mix') {
+                // Calculate weights for all problems
                 let weighted = problemBank.map(p => ({ ...p, weight: getProblemWeight(p) }));
+
+                // Sort by weight with randomization (weighted random shuffle)
                 weighted.sort((a, b) => (b.weight * Math.random()) - (a.weight * Math.random()));
+
+                // Select top 5 problems
                 let selected = weighted.slice(0, 5);
+
+                // Sort selected by difficulty level (ascending)
                 selected.sort((a, b) => a.level - b.level);
+
+                // Update active problems
                 state.activeProblems = selected;
+
+                // Track recently shown tasks (keep last 20 tasks in history)
+                const newIds = selected.map(p => p.id);
+                state.recentlyShown = [...newIds, ...state.recentlyShown].slice(0, 20);
+                localStorage.setItem('mathTrainerRecentlyShown', JSON.stringify(state.recentlyShown));
             }
         }
 
@@ -1689,7 +1794,13 @@ $$`;
                 
                 let labelsHTML = '';
                 if (state.mode === 'mix') {
-                     labelsHTML = `<span class="bg-purple-100 text-purple-600 px-2 py-1 rounded">${texts.label_mix}</span>`;
+                     // Check if this task is recommended (from a struggling topic)
+                     const recommended = isRecommended(prob);
+                     if (recommended) {
+                         labelsHTML = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded font-bold"><i class="fa-solid fa-star mr-1"></i>${texts.label_recommended}</span>`;
+                     } else {
+                         labelsHTML = `<span class="bg-purple-100 text-purple-600 px-2 py-1 rounded">${texts.label_mix}</span>`;
+                     }
                 } else {
                     labelsHTML = `
                         <span class="bg-stone-100 text-stone-500 px-2 py-1 rounded">Nivå ${prob.level}</span>
