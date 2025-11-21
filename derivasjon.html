@@ -1931,21 +1931,20 @@ $$`;
         function updateChartData() {
             let mastered = 0;
             let practice = 0;
-            const total = problemBank.length;
             const attemptedIds = [];
-            
+
             Object.entries(state.progress).forEach(([id, val]) => {
                 if(val === 'mastered') mastered++;
                 if(val === 'practice') practice++;
                 if(val === 'mastered' || val === 'practice') attemptedIds.push(parseInt(id));
             });
-            
-            const pending = Math.max(0, total - mastered - practice);
+
             const texts = i18n[state.language];
-            
-            chart1.data.labels = [texts.chart_mastered, texts.chart_practice, texts.chart_pending];
-            chart1.data.datasets[0].data = [mastered, practice, pending];
-            chart1.data.datasets[0].backgroundColor = ['#10b981', '#f59e0b', '#e7e5e4'];
+
+            // Only show attempted tasks (mastered + practice), not the full 1200 task bank
+            chart1.data.labels = [texts.chart_mastered, texts.chart_practice];
+            chart1.data.datasets[0].data = [mastered, practice];
+            chart1.data.datasets[0].backgroundColor = ['#10b981', '#f59e0b'];
             chart1.update();
 
             const topics = ['chain', 'product', 'quotient'];
