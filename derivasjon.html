@@ -272,6 +272,13 @@
                         <h3 class="font-semibold text-stone-800 mb-4 text-center" data-key="stat_chart_total">Total Oversikt</h3>
                         <div class="chart-wrapper"><canvas id="masteryChart"></canvas></div>
                     </div>
+
+                    <!-- Clear Progress Button -->
+                    <div class="mt-8 text-center">
+                        <button onclick="clearProgress()" class="px-4 py-2 text-sm font-medium text-red-600 bg-red-50 hover:bg-red-100 border border-red-200 rounded-lg transition-colors">
+                            <i class="fa-solid fa-trash-can mr-2"></i><span data-key="btn_clear_progress">Nullstill Fremgang</span>
+                        </button>
+                    </div>
                 </div>
             </div>
 
@@ -308,9 +315,10 @@
             currentView: 'dashboard',
             language: 'no',
             activeTopic: 'chain',
-            mode: 'focus', 
+            mode: 'focus',
             progress: JSON.parse(localStorage.getItem('mathTrainerProgress')) || {},
             hints: JSON.parse(localStorage.getItem('mathTrainerHints')) || [],
+            recentlyShown: JSON.parse(localStorage.getItem('mathTrainerRecentlyShown')) || [],
             activeProblems: [],
             filters: {
                 levels: [1, 2, 3, 4, 5],
@@ -371,7 +379,9 @@
                 help_mix_title: "Smart Miks",
                 help_mix_desc: "Algoritmen lærer av dine svar. Den gir deg oppgaver du trenger å øve mer på, samt en god blanding av repetisjon.",
                 help_stats_title: "Statistikk",
-                help_stats_desc: "Få oversikt over fremgangen din fordelt på emne og vanskelighetsgrad."
+                help_stats_desc: "Få oversikt over fremgangen din fordelt på emne og vanskelighetsgrad.",
+                btn_clear_progress: "Nullstill Fremgang",
+                clear_confirm: "Er du sikker på at du vil slette all fremgang? Dette kan ikke angres."
             },
             en: {
                 nav_dashboard: "Dashboard",
@@ -425,7 +435,9 @@
                 help_mix_title: "Smart Mix",
                 help_mix_desc: "The algorithm learns from you, prioritizing tasks you need to practice.",
                 help_stats_title: "Statistics",
-                help_stats_desc: "Track your mastery across topics and difficulty levels."
+                help_stats_desc: "Track your mastery across topics and difficulty levels.",
+                btn_clear_progress: "Clear Progress",
+                clear_confirm: "Are you sure you want to delete all progress? This cannot be undone."
             },
             es: {
                 nav_dashboard: "Tablero",
@@ -479,7 +491,9 @@
                 help_mix_title: "Mezcla Inteligente",
                 help_mix_desc: "El algoritmo aprende de ti, priorizando lo que necesitas practicar.",
                 help_stats_title: "Estadísticas",
-                help_stats_desc: "Rastrea tu dominio por tema y nivel."
+                help_stats_desc: "Rastrea tu dominio por tema y nivel.",
+                btn_clear_progress: "Borrar Progreso",
+                clear_confirm: "¿Estás seguro de que quieres eliminar todo el progreso? Esto no se puede deshacer."
             },
             uk: {
                 nav_dashboard: "Огляд",
@@ -533,7 +547,9 @@
                 help_mix_title: "Розумний Мікс",
                 help_mix_desc: "Алгоритм навчається на ваших відповідях, пріоритизуючи завдання, які вам потрібно практикувати.",
                 help_stats_title: "Статистика",
-                help_stats_desc: "Відстежуйте свою майстерність за темами та рівнями складності."
+                help_stats_desc: "Відстежуйте свою майстерність за темами та рівнями складності.",
+                btn_clear_progress: "Очистити Прогрес",
+                clear_confirm: "Ви впевнені, що хочете видалити весь прогрес? Це не можна скасувати."
             }
         };
 
@@ -1588,21 +1604,127 @@ $$`;
             renderProblems();
         }
 
+        // Helper function to get topic statistics
+        function getTopicStats(topic) {
+            let mastered = 0;
+            let practice = 0;
+            let total = 0;
+
+            problemBank.forEach(p => {
+                if (p.topic === topic) {
+                    total++;
+                    const status = state.progress[p.id];
+                    if (status === 'mastered') mastered++;
+                    if (status === 'practice') practice++;
+                }
+            });
+
+            return { mastered, practice, total, attempted: mastered + practice };
+        }
+
+        // Helper function to get mastery level for a topic (0-1 scale)
+        function getTopicMasteryLevel(topic) {
+            const stats = getTopicStats(topic);
+            if (stats.attempted === 0) return 0;
+            return stats.mastered / stats.attempted;
+        }
+
+        // Helper function to identify struggling topics
+        function getStrugglingTopics() {
+            const topics = ['chain', 'product', 'quotient'];
+            const struggling = [];
+
+            topics.forEach(topic => {
+                const stats = getTopicStats(topic);
+                // A topic is "struggling" if:
+                // - User has attempted at least 3 tasks AND
+                // - More than 30% are marked as 'practice' OR mastery rate < 60%
+                if (stats.attempted >= 3) {
+                    const practiceRate = stats.practice / stats.attempted;
+                    const masteryRate = stats.mastered / stats.attempted;
+                    if (practiceRate > 0.3 || masteryRate < 0.6) {
+                        struggling.push(topic);
+                    }
+                }
+            });
+
+            return struggling;
+        }
+
+        // Helper function to check if a problem is recommended
+        function isRecommended(problem) {
+            const strugglingTopics = getStrugglingTopics();
+            return strugglingTopics.includes(problem.topic);
+        }
+
+        // Helper function to get preferred difficulty for a topic
+        function getPreferredDifficultyForTopic(topic) {
+            const stats = getTopicStats(topic);
+            if (stats.attempted < 3) return 1; // Start easy for new topics
+
+            const masteryRate = stats.mastered / stats.attempted;
+
+            // If mastery is high (>70%), prefer higher difficulty
+            if (masteryRate > 0.7) return 3;
+            // If mastery is medium (40-70%), prefer medium difficulty
+            if (masteryRate > 0.4) return 2;
+            // If struggling (<40%), prefer lower difficulty
+            return 1;
+        }
+
         function getProblemWeight(problem) {
             const status = state.progress[problem.id];
             let weight = 1;
-            if (status === 'practice') weight += 10;
-            if (status === 'mastered') weight = 0.1;
+
+            // Exclude already completed tasks (mastered or practice) from smart mix
+            // Users should only see new, unrated tasks
+            if (status === 'mastered' || status === 'practice') {
+                return 0;
+            }
+
+            // Reduce weight for recently shown tasks
+            if (state.recentlyShown.includes(problem.id)) {
+                weight *= 0.1;
+            }
+
+            // Boost weight for recommended tasks from struggling topics
+            if (isRecommended(problem)) {
+                weight *= 3; // Higher boost to make recommended tasks more prominent
+            }
+
+            // Adaptive difficulty: adjust weight based on topic mastery and problem difficulty
+            const preferredDifficulty = getPreferredDifficultyForTopic(problem.topic);
+            const difficultyDiff = Math.abs(problem.level - preferredDifficulty);
+
+            // Reduce weight if difficulty is far from preferred level
+            if (difficultyDiff > 1) {
+                weight *= 0.5;
+            }
+
             return weight;
         }
 
         function updateProblemSet() {
             if (state.mode === 'mix') {
+                // Calculate weights for all problems
                 let weighted = problemBank.map(p => ({ ...p, weight: getProblemWeight(p) }));
+
+                // Sort by weight with randomization (weighted random shuffle)
                 weighted.sort((a, b) => (b.weight * Math.random()) - (a.weight * Math.random()));
+
+                // Select top 5 problems
                 let selected = weighted.slice(0, 5);
+
+                // Sort selected by difficulty level (ascending)
                 selected.sort((a, b) => a.level - b.level);
+
+                // Update active problems
                 state.activeProblems = selected;
+
+                // Track recently shown tasks (keep last 20 tasks in history)
+                const newIds = selected.map(p => p.id);
+                state.recentlyShown = [...newIds, ...state.recentlyShown].slice(0, 20);
+                localStorage.setItem('mathTrainerRecentlyShown', JSON.stringify(state.recentlyShown));
             }
         }
 
@@ -1689,7 +1811,13 @@ $$`;
                 
                 let labelsHTML = '';
                 if (state.mode === 'mix') {
-                     labelsHTML = `<span class="bg-purple-100 text-purple-600 px-2 py-1 rounded">${texts.label_mix}</span>`;
+                     // Check if this task is recommended (from a struggling topic)
+                     const recommended = isRecommended(prob);
+                     if (recommended) {
+                         labelsHTML = `<span class="bg-amber-100 text-amber-700 px-2 py-1 rounded font-bold"><i class="fa-solid fa-star mr-1"></i>${texts.label_recommended}</span>`;
+                     } else {
+                         labelsHTML = `<span class="bg-purple-100 text-purple-600 px-2 py-1 rounded">${texts.label_mix}</span>`;
+                     }
                 } else {
                     labelsHTML = `
                         <span class="bg-stone-100 text-stone-500 px-2 py-1 rounded">Nivå ${prob.level}</span>
@@ -1768,6 +1896,32 @@ $$`;
             renderProblems();
         }
 
+        function clearProgress() {
+            const texts = i18n[state.language];
+            if (confirm(texts.clear_confirm)) {
+                // Clear all progress data from state
+                state.progress = {};
+                state.hints = [];
+                state.recentlyShown = [];
+                state.activeProblems = [];
+
+                // Clear all localStorage items
+                localStorage.removeItem('mathTrainerProgress');
+                localStorage.removeItem('mathTrainerHints');
+                localStorage.removeItem('mathTrainerRecentlyShown');
+
+                // Update all views
+                updateChartData();
+                renderProblems();
+
+                // Show success message
+                alert('✓ ' + (state.language === 'no' ? 'All fremgang er slettet' :
+                              state.language === 'en' ? 'All progress has been cleared' :
+                              state.language === 'es' ? 'Todo el progreso ha sido eliminado' :
+                              'Весь прогрес видалено'));
+            }
+        }
+
         function setLanguage(lang) {
             state.language = lang;
             localStorage.setItem('mathTrainerLang', lang);
@@ -1820,21 +1974,20 @@ $$`;
         function updateChartData() {
             let mastered = 0;
             let practice = 0;
-            const total = problemBank.length;
             const attemptedIds = [];
-            
+
             Object.entries(state.progress).forEach(([id, val]) => {
                 if(val === 'mastered') mastered++;
                 if(val === 'practice') practice++;
                 if(val === 'mastered' || val === 'practice') attemptedIds.push(parseInt(id));
             });
-            
-            const pending = Math.max(0, total - mastered - practice);
+
             const texts = i18n[state.language];
-            
-            chart1.data.labels = [texts.chart_mastered, texts.chart_practice, texts.chart_pending];
-            chart1.data.datasets[0].data = [mastered, practice, pending];
-            chart1.data.datasets[0].backgroundColor = ['#10b981', '#f59e0b', '#e7e5e4'];
+
+            // Only show attempted tasks (mastered + practice), not the full 1200 task bank
+            chart1.data.labels = [texts.chart_mastered, texts.chart_practice];
+            chart1.data.datasets[0].data = [mastered, practice];
+            chart1.data.datasets[0].backgroundColor = ['#10b981', '#f59e0b'];
             chart1.update();
 
             const topics = ['chain', 'product', 'quotient'];
