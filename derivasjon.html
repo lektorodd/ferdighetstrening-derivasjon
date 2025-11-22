@@ -1454,21 +1454,44 @@ $$`;
             // --- QUOTIENT RULE ---
             else if (rule === 'quotient') {
                  if (type === 'poly') {
+                    // Generate proper quotient rule: polynomial/polynomial
+                    const m = r(1, 2 + Math.floor(lvl/2)); // Power of x in numerator
+                    const numer = m === 1 ? `x` : `x^${m}`;
                     const denom = `${fmt(b,'x')} ${fmtNum(n)}`;
-                    q = `f(x) = \\frac{${a}}{${denom}}`;
-                    const rawNum = `0 \\cdot (${denom}) - ${a} \\cdot ${b}`;
-                    const ans = `f'(x) = \\frac{${-a*b}}{(${denom})^2}`;
+                    q = `f(x) = \\frac{${numer}}{${denom}}`;
+
+                    const u_val = numer;
+                    const v_val = denom;
+                    const up_val = m === 1 ? `1` : `${m}x${fmtPow(m-1)}`;
+                    const vp_val = `${b}`;
+
+                    const rawNum = `${up_val} \\cdot (${denom}) - ${numer} \\cdot ${b}`;
+
+                    // Simplified answer (expand numerator)
+                    let simpNum;
+                    if (m === 1) {
+                        // (1)(bx + n) - x(b) = bx + n - bx = n
+                        simpNum = `${n}`;
+                    } else if (m === 2) {
+                        // (2x)(bx + n) - x²(b) = 2bx² + 2nx - bx² = bx² + 2nx
+                        simpNum = `${b}x^2 ${fmtNum(2*n, true)}x`;
+                    } else {
+                        // General case: (mx^(m-1))(bx + n) - x^m(b) = mbx^m + mnx^(m-1) - bx^m = b(m-1)x^m + mnx^(m-1)
+                        simpNum = `${b*(m-1)}x${fmtPow(m)} ${fmtNum(m*n, true)}x${fmtPow(m-1)}`;
+                    }
+
+                    const ans = `f'(x) = \\frac{${simpNum}}{(${denom})^2}`;
                     const steps = `$$
 \\begin{aligned}
-u &= ${a} & v &= ${denom} \\\\
-u' &= 0 & v' &= ${b}
+u &= ${u_val} & v &= ${v_val} \\\\
+u' &= ${up_val} & v' &= ${vp_val}
 \\end{aligned}
 $$
 $$
 \\begin{aligned}
 f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
 &= \\frac{${rawNum}}{(${denom})^2} \\\\
-&= \\frac{${-a*b}}{(${denom})^2}
+&= \\frac{${simpNum}}{(${denom})^2}
 \\end{aligned}
 $$`;
                     add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
