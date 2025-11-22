@@ -1473,9 +1473,22 @@ $$`;
                      q = `f(x) = \\frac{\\sqrt{x}}{${denom}}`;
                      const rawNum = `\\frac{1}{2\\sqrt{x}}(${denom}) - \\sqrt{x}`;
                      const combinedNum = `\\frac{(${denom}) - 2x}{2\\sqrt{x}}`;
-                     const simpNum = `${fmtNum(a)} - x`;
+                     const simpNum = `${fmtNum(a, true)} - x`;
                      const ans = `f'(x) = \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}`;
-                     const steps = `$u=\\sqrt{x}, v=${denom}$. $u'=\\frac{1}{2\\sqrt{x}}, v'=1$. $$f'(x) = \\frac{u'v - uv'}{v^2} \\\\ = \\frac{${rawNum}}{(${denom})^2} \\\\ = \\frac{${combinedNum}}{(${denom})^2} \\\\ = \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}$$`;
+                     const steps = `$$
+\\begin{aligned}
+u &= \\sqrt{x} & v &= ${denom} \\\\
+u' &= \\frac{1}{2\\sqrt{x}} & v' &= 1
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${combinedNum}}{(${denom})^2} \\\\
+&= \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}
+\\end{aligned}
+$$`;
                      add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
                 }
             }
