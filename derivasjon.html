@@ -1280,6 +1280,12 @@
         function fmtPow(n) {
             return n === 1 ? "" : `^${n}`;
         }
+        function fmtExpCoeff(coeff) {
+            // Format coefficient for exponential expressions
+            // Returns empty string when coeff is 1 to avoid e^{1x}
+            // Returns coefficient value otherwise
+            return coeff === 1 ? "" : `${coeff}`;
+        }
 
         function generateProblemBank() {
             let id = 1000;
@@ -1348,7 +1354,7 @@
                     gpu_tex = `e^u`;
                     up_tex = up_val;
                     subst_tex = `e^{${u_val}} \\cdot ${par(a)}`;
-                    final_tex = `${a}e^{${u_val}}`;
+                    final_tex = `${fmtExpCoeff(a)}e^{${u_val}}`;
                     hint = "e^u regel.";
                 }
                 else if (type === 'log') {
@@ -1395,13 +1401,14 @@ $$`;
                     hint = "Bruk produktregelen: u'v + uv'.";
                 }
                 else if (type === 'exp') {
-                    q = `f(x) = x^${n} e^{${a}x}`;
+                    const exp_part = fmt(a, 'x', true); // Formats "1x" as "x", "2x" as "2x"
+                    q = `f(x) = x^${n} e^{${exp_part}}`;
                     u_tex = `x^${n}`;
-                    v_tex = `e^{${a}x}`;
+                    v_tex = `e^{${exp_part}}`;
                     up_tex = `${n}x${fmtPow(n-1)}`;
-                    vp_tex = `${a}e^{${a}x}`;
+                    vp_tex = `${fmtExpCoeff(a)}e^{${exp_part}}`;
                     raw_tex = `${up_tex} \\cdot ${v_tex} + ${u_tex} \\cdot ${vp_tex}`;
-                    simp_tex = `x${fmtPow(n-1)}e^{${a}x}(${n} + ${a}x)`;
+                    simp_tex = `x${fmtPow(n-1)}e^{${exp_part}}(${n} + ${exp_part})`;
                     hint = "Produktregel + Kjerneregel på e.";
                 }
                 else if (type === 'log') {
@@ -1451,28 +1458,77 @@ $$`;
                     q = `f(x) = \\frac{${a}}{${denom}}`;
                     const rawNum = `0 \\cdot (${denom}) - ${a} \\cdot ${b}`;
                     const ans = `f'(x) = \\frac{${-a*b}}{(${denom})^2}`;
-                    const steps = `$u=${a}, v=${denom}$. $u'=0, v'=${b}$. $$f'(x) = \\frac{u'v - uv'}{v^2} \\\\ = \\frac{${rawNum}}{(${denom})^2} \\\\ = \\frac{${-a*b}}{(${denom})^2}$$`;
+                    const steps = `$$
+\\begin{aligned}
+u &= ${a} & v &= ${denom} \\\\
+u' &= 0 & v' &= ${b}
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${-a*b}}{(${denom})^2}
+\\end{aligned}
+$$`;
                     add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
                 }
                 else if (type === 'exp') {
-                    q = `f(x) = \\frac{e^{${a}x}}{x}`;
-                    const rawNum = `${a}e^{${a}x} \\cdot x - e^{${a}x} \\cdot 1`;
-                    const ans = `f'(x) = \\frac{e^{${a}x}(${a}x - 1)}{x^2}`;
-                    const steps = `$u=e^{${a}x}, v=x$. $u'=${a}e^{${a}x}, v'=1$. $$f'(x) = \\frac{${rawNum}}{x^2} \\\\ = \\frac{e^{${a}x}(${a}x - 1)}{x^2}$$`;
+                    const exp_part = fmt(a, 'x', true); // Formats "1x" as "x", "2x" as "2x"
+                    q = `f(x) = \\frac{e^{${exp_part}}}{x}`;
+                    const rawNum = `${fmtExpCoeff(a)}e^{${exp_part}} \\cdot x - e^{${exp_part}} \\cdot 1`;
+                    const ans = `f'(x) = \\frac{e^{${exp_part}}(${exp_part} - 1)}{x^2}`;
+                    const steps = `$$
+\\begin{aligned}
+u &= e^{${exp_part}} & v &= x \\\\
+u' &= ${fmtExpCoeff(a)}e^{${exp_part}} & v' &= 1
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x^2} \\\\
+&= \\frac{e^{${exp_part}}(${exp_part} - 1)}{x^2}
+\\end{aligned}
+$$`;
                     add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
                 }
                 else if (type === 'log') {
                     q = `f(x) = \\frac{\\ln x}{x^${n}}`;
                     const rawNum = `(\\frac{1}{x}) \\cdot x^${n} - \\ln x \\cdot ${n}x${fmtPow(n-1)}`;
                     const ans = `f'(x) = \\frac{1 - ${n}\\ln x}{x^${n+1}}`;
-                    const steps = `$u=\\ln x, v=x^${n}$. $u'=1/x, v'=${n}x${fmtPow(n-1)}$. $$f'(x) = \\frac{${rawNum}}{(x^${n})^2} \\\\ = \\frac{x${fmtPow(n-1)}(1 - ${n}\\ln x)}{x^${2*n}} \\\\ = \\frac{1 - ${n}\\ln x}{x^${n+1}}$$`;
+                    const steps = `$$
+\\begin{aligned}
+u &= \\ln x & v &= x^${n} \\\\
+u' &= \\frac{1}{x} & v' &= ${n}x${fmtPow(n-1)}
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(x^${n})^2} \\\\
+&= \\frac{x${fmtPow(n-1)}(1 - ${n}\\ln x)}{x^${2*n}} \\\\
+&= \\frac{1 - ${n}\\ln x}{x^${n+1}}
+\\end{aligned}
+$$`;
                     add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
                 }
                  else {
                      const denom = `x ${fmtNum(a)}`;
                      q = `f(x) = \\frac{\\sqrt{x}}{${denom}}`;
-                     const ans = `...`; 
-                     const steps = `$u=\\sqrt{x}, v=${denom}$. $$f'(x) = \\frac{\\frac{1}{2\\sqrt{x}}(${denom}) - \\sqrt{x}(1)}{(${denom})^2}$$`;
+                     const ans = `...`;
+                     const steps = `$$
+\\begin{aligned}
+u &= \\sqrt{x} & v &= ${denom} \\\\
+u' &= \\frac{1}{2\\sqrt{x}} & v' &= 1
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{\\frac{1}{2\\sqrt{x}}(${denom}) - \\sqrt{x}(1)}{(${denom})^2}
+\\end{aligned}
+$$`;
                      add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
                 }
             }
