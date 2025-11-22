@@ -1578,8 +1578,8 @@ $$`;
             if (viewId === 'practice') {
                 if(state.activeProblems.length === 0) {
                     state.mode = 'focus';
-                    renderModeUI();
                 }
+                renderModeUI(); // Always update toggle UI to match current mode
                 renderProblems();
             }
             
@@ -1592,9 +1592,8 @@ $$`;
         function startFocusMode() {
             state.mode = 'focus';
             if(!state.activeTopic) state.activeTopic = 'chain';
-            state.activeProblems = []; 
+            state.activeProblems = [];
             navigateTo('practice');
-            renderModeUI();
             updateFilterCount();
         }
 
