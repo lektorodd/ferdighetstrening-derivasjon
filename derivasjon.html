@@ -210,10 +210,10 @@
                             <div>
                                 <h4 class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3" data-key="filter_types">Matematisk Område</h4>
                                 <div class="flex gap-2 flex-wrap">
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="poly" onchange="toggleFilter('type', 'poly')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Polynomer</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="root" onchange="toggleFilter('type', 'root')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Røtter</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="exp" onchange="toggleFilter('type', 'exp')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Eksponential</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="log" onchange="toggleFilter('type', 'log')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Logaritmer</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="poly" onchange="toggleFilter('type', 'poly')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_poly">Polynomer</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="root" onchange="toggleFilter('type', 'root')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_root">Røtter</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="exp" onchange="toggleFilter('type', 'exp')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_exp">Eksponential</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="log" onchange="toggleFilter('type', 'log')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_log">Logaritmer</div></label>
                                 </div>
                             </div>
                         </div>
@@ -370,6 +370,10 @@
                 filter_rule: "Regel",
                 filter_levels: "Nivå",
                 filter_types: "Matematisk Område",
+                type_poly: "Polynomer",
+                type_root: "Røtter",
+                type_exp: "Eksponential",
+                type_log: "Logaritmer",
                 btn_draw_focus: "Trekk 5 oppgaver",
                 focus_end_text: "Vil du ha flere av samme type?",
                 btn_new_focus: "Trekk 5 nye (samme filtre)",
@@ -426,6 +430,10 @@
                 filter_rule: "Rule",
                 filter_levels: "Levels",
                 filter_types: "Math Area",
+                type_poly: "Polynomials",
+                type_root: "Roots",
+                type_exp: "Exponential",
+                type_log: "Logarithms",
                 btn_draw_focus: "Draw 5 Problems",
                 focus_end_text: "Want more of the same?",
                 btn_new_focus: "Draw 5 New (Same Filters)",
@@ -482,6 +490,10 @@
                 filter_rule: "Regla",
                 filter_levels: "Niveles",
                 filter_types: "Área Matemática",
+                type_poly: "Polinomios",
+                type_root: "Raíces",
+                type_exp: "Exponencial",
+                type_log: "Logaritmos",
                 btn_draw_focus: "Extraer 5 problemas",
                 focus_end_text: "¿Quieres más?",
                 btn_new_focus: "Extraer 5 nuevas",
@@ -538,6 +550,10 @@
                 filter_rule: "Правило",
                 filter_levels: "Рівні",
                 filter_types: "Математична Область",
+                type_poly: "Поліноми",
+                type_root: "Корені",
+                type_exp: "Експоненціальні",
+                type_log: "Логарифми",
                 btn_draw_focus: "Отримати 5 Задач",
                 focus_end_text: "Хочете більше таких самих?",
                 btn_new_focus: "Отримати 5 Нових (Ті ж Фільтри)",
@@ -1306,6 +1322,1740 @@
             return bank;
         }
 
+        function generateProductProblem(type, lvl, a, b, n, add) {
+            const r = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+            const par = (val) => val < 0 ? `(${val})` : val;
+
+            // Helper to create aligned environment steps
+            const makeAlignedSteps = (u, v, up, vp, steps) => {
+                return `$$
+\\begin{aligned}
+u &= ${u} & v &= ${v} \\\\
+u' &= ${up} & v' &= ${vp}
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+${steps}
+\\end{aligned}
+$$`;
+            };
+
+            if (type === 'poly') {
+                generateProductPoly(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+            else if (type === 'root') {
+                generateProductRoot(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+            else if (type === 'exp') {
+                generateProductExp(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+            else if (type === 'log') {
+                generateProductLog(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+        }
+
+        function generateProductPoly(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Easy basics
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // x · (x + a) - simple linear times linear
+                    const v = `x ${fmtNum(a)}`;
+                    const raw = `1 \\cdot (${v}) + x \\cdot 1`;
+                    const simp = `2x ${fmtNum(a)}`;
+                    const ans = `f'(x) = ${simp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp}`;
+                    return {
+                        q: `f(x) = x(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, `1`, steps),
+                        hint: "To lineære faktorer - enkel produktregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x + a)(x + b) - binomial product
+                    const c = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const u = `x ${fmtNum(a)}`;
+                    const v = `x ${fmtNum(c)}`;
+                    const raw = `1 \\cdot (${v}) + (${u}) \\cdot 1`;
+                    const simp = `2x ${fmtNum(a + c)}`;
+                    const ans = `f'(x) = ${simp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp}`;
+                    return {
+                        q: `f(x) = (${u})(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `1`, `1`, steps),
+                        hint: "Produktet av to binomer."
+                    };
+                });
+            }
+
+            // Level 2: Quadratic terms
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // x² · (ax + b) - quadratic times linear
+                    const v = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const raw = `2x(${v}) + x^2 \\cdot ${a}`;
+                    const expanded = `${2*a}x^2 ${fmtNum(2*b, true)}x + ${a}x^2`;
+                    const simp = `${3*a}x^2 ${fmtNum(2*b, true)}x`;
+                    const factored = `x(${3*a}x ${fmtNum(2*b)})`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = x^2(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, v, `2x`, `${a}`, steps),
+                        hint: "Kvadratisk ganger lineær - faktoriser resultatet."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x · (x² + a) - linear times quadratic
+                    const v = `x^2 ${fmtNum(a)}`;
+                    const raw = `1 \\cdot (${v}) + x \\cdot 2x`;
+                    const simp = `3x^2 ${fmtNum(a)}`;
+                    const ans = `f'(x) = ${simp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp}`;
+                    return {
+                        q: `f(x) = x(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, `2x`, steps),
+                        hint: "Lineær ganger kvadratisk."
+                    };
+                });
+            }
+
+            // Level 3: Chain rule integration
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // x · (ax + b)² - linear times squared binomial
+                    const inner = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `(${inner})^2`;
+                    const vp = `2(${inner}) \\cdot ${a}`;
+                    const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
+                    const ans = `f'(x) = ${v} + x \\cdot ${vp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = x(${inner})^2`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, vp, steps),
+                        hint: "Bruk kjerneregelen på den kvadrerte faktoren."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x² · (x² + a) - quadratic times quadratic
+                    const v = `x^2 ${fmtNum(a)}`;
+                    const raw = `2x(${v}) + x^2 \\cdot 2x`;
+                    const expanded = `2x^3 ${fmtNum(2*a, true)}x + 2x^3`;
+                    const simp = `4x^3 ${fmtNum(2*a, true)}x`;
+                    const factored = `2x(2x^2 ${fmtNum(a)})`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = x^2(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, v, `2x`, `2x`, steps),
+                        hint: "To kvadratiske faktorer."
+                    };
+                });
+            }
+
+            // Level 4: Advanced - complex polynomials
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // (x² + a) · (x² + b) - quadratic times quadratic
+                    const c = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const u = `x^2 ${fmtNum(a)}`;
+                    const v = `x^2 ${fmtNum(c)}`;
+                    const raw = `2x(${v}) + (${u}) \\cdot 2x`;
+                    const expanded = `2x^3 ${fmtNum(2*c, true)}x + 2x^3 ${fmtNum(2*a, true)}x`;
+                    const simp = `4x^3 ${fmtNum(2*(a + c), true)}x`;
+                    const factored = `2x(2x^2 ${fmtNum(a + c)})`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = (${u})(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `2x`, `2x`, steps),
+                        hint: "Produktet av to kvadratiske uttrykk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x³ · (x² + a) - cubic times quadratic
+                    const v = `x^2 ${fmtNum(a)}`;
+                    const raw = `3x^2(${v}) + x^3 \\cdot 2x`;
+                    const expanded = `3x^4 ${fmtNum(3*a, true)}x^2 + 2x^4`;
+                    const simp = `5x^4 ${fmtNum(3*a, true)}x^2`;
+                    const factored = `x^2(5x^2 ${fmtNum(3*a)})`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = x^3(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^3`, v, `3x^2`, `2x`, steps),
+                        hint: "Kubisk ganger kvadratisk - høyere grads polynom."
+                    };
+                });
+            }
+
+            // Level 5: Expert - very challenging
+            else {
+                patterns.push(() => {
+                    // (x² + a)² · (x + b) - squared quadratic times linear
+                    const c = r(1, 2);
+                    const inner = `x^2 ${fmtNum(a)}`;
+                    const u = `(${inner})^2`;
+                    const up = `2(${inner}) \\cdot 2x`;
+                    const v = `x ${fmtNum(c)}`;
+                    const raw = `${up}(${v}) + ${u} \\cdot 1`;
+                    const ans = `f'(x) = ${up}(${v}) + ${u}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = (${inner})^2(${v})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, up, `1`, steps),
+                        hint: "Kvadrert kvadratisk uttrykk - dobbel kjerneregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x² + a) · (x² + b) · (x + c) - triple product!
+                    const c = r(1, 2);
+                    const d = r(1, 2) * (Math.random() > 0.5 ? 1 : -1);
+                    const u1 = `x^2 ${fmtNum(a)}`;
+                    const u2 = `x^2 ${fmtNum(c)}`;
+                    const u3 = `x ${fmtNum(d)}`;
+                    const ans = `f'(x) = 2x(${u2})(${u3}) + (${u1}) \\cdot 2x(${u3}) + (${u1})(${u2}) \\cdot 1`;
+                    const steps = `f'(x) &= u'vw + uv'w + uvw' \\\\
+&= ${ans}`;
+                    return {
+                        q: `f(x) = (${u1})(${u2})(${u3})`,
+                        a: `$$ ${ans} $$`,
+                        steps: `$$
+\\begin{aligned}
+u &= ${u1} & v &= ${u2} & w &= ${u3} \\\\
+u' &= 2x & v' &= 2x & w' &= 1
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+${steps}
+\\end{aligned}
+$$`,
+                        hint: "Trippel-produkt! Bruk formelen: (uvw)' = u'vw + uv'w + uvw'"
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('product', lvl, 'poly', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
+        function generateProductRoot(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Easy basics
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // x · √x - simple product
+                    const raw = `1 \\cdot \\sqrt{x} + x \\cdot \\frac{1}{2\\sqrt{x}}`;
+                    const combined = `\\frac{2\\sqrt{x} + x}{2\\sqrt{x}}`;
+                    const simp = `\\frac{3x}{2\\sqrt{x}}`;
+                    const final = `\\frac{3\\sqrt{x}}{2}`;
+                    const ans = `f'(x) = ${final}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${combined} \\\\
+&= ${simp} \\\\
+&= ${final}`;
+                    return {
+                        q: `f(x) = x\\sqrt{x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, `\\sqrt{x}`, `1`, `\\frac{1}{2\\sqrt{x}}`, steps),
+                        hint: "x ganger kvadratrot x - kan også skrives som x^{3/2}."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x + a) · √x - linear times root
+                    const u = `x ${fmtNum(a)}`;
+                    const raw = `1 \\cdot \\sqrt{x} + (${u}) \\cdot \\frac{1}{2\\sqrt{x}}`;
+                    const combined = `\\frac{2\\sqrt{x} \\cdot \\sqrt{x} + (${u})}{2\\sqrt{x}}`;
+                    const simp = `\\frac{2x ${fmtNum(a)}}{2\\sqrt{x}}`;
+                    const ans = `f'(x) = \\frac{2x ${fmtNum(a)}}{2\\sqrt{x}}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${ans}`;
+                    return {
+                        q: `f(x) = (${u})\\sqrt{x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, `\\sqrt{x}`, `1`, `\\frac{1}{2\\sqrt{x}}`, steps),
+                        hint: "Lineært uttrykk ganger kvadratrot."
+                    };
+                });
+            }
+
+            // Level 2: More complex
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // x² · √x - quadratic times root
+                    const raw = `2x \\cdot \\sqrt{x} + x^2 \\cdot \\frac{1}{2\\sqrt{x}}`;
+                    const combined = `\\frac{4x\\sqrt{x} + x^2}{2\\sqrt{x}}`;
+                    const simp = `\\frac{4x^{3/2} + x^2}{2\\sqrt{x}}`;
+                    const ans = `f'(x) = \\frac{5x^2}{2\\sqrt{x}}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${combined}`;
+                    return {
+                        q: `f(x) = x^2\\sqrt{x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, `\\sqrt{x}`, `2x`, `\\frac{1}{2\\sqrt{x}}`, steps),
+                        hint: "x² ganger √x = x^{5/2}."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x · √(ax + b) - linear times root with chain
+                    const inner = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `\\sqrt{${inner}}`;
+                    const vp = `\\frac{${a}}{2\\sqrt{${inner}}}`;
+                    const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = x\\sqrt{${inner}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, vp, steps),
+                        hint: "Kjerneregel på kvadratroten."
+                    };
+                });
+            }
+
+            // Level 3: Chain rules
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // x · √(ax + b) with more complex chain
+                    const inner = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `\\sqrt{${inner}}`;
+                    const vp = `\\frac{${a}}{2\\sqrt{${inner}}}`;
+                    const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
+                    const ans = `f'(x) = ${v} + \\frac{${a}x}{2\\sqrt{${inner}}}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${ans}`;
+                    return {
+                        q: `f(x) = x\\sqrt{${inner}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, vp, steps),
+                        hint: "Kombiner produktregel og kjerneregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (ax + b) · √(cx + d) - both need chain rule
+                    const c = r(1, 2);
+                    const d = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const u = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `\\sqrt{${fmt(c,'x')} ${fmtNum(d)}}`;
+                    const vp = `\\frac{${c}}{2\\sqrt{${fmt(c,'x')} ${fmtNum(d)}}}`;
+                    const raw = `${a} \\cdot ${v} + (${u}) \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = (${u})${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `${a}`, vp, steps),
+                        hint: "Begge faktorer krever kjerneregel."
+                    };
+                });
+            }
+
+            // Level 4: Advanced
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // (x² + a) · √(bx + c) - quadratic times root with chain
+                    const c = r(1, 2);
+                    const d = r(1, 3);
+                    const u = `x^2 ${fmtNum(a)}`;
+                    const v = `\\sqrt{${fmt(c,'x')} ${fmtNum(d)}}`;
+                    const vp = `\\frac{${c}}{2\\sqrt{${fmt(c,'x')} ${fmtNum(d)}}}`;
+                    const raw = `2x \\cdot ${v} + (${u}) \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = (${u})${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `2x`, vp, steps),
+                        hint: "Kvadratisk uttrykk ganger rot med kjerneregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // √(ax + b) · √(cx + d) - product of two roots
+                    const c = r(1, 2);
+                    const d = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const u = `\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const v = `\\sqrt{${fmt(c,'x')} ${fmtNum(d)}}`;
+                    const up = `\\frac{${a}}{2\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}}`;
+                    const vp = `\\frac{${c}}{2\\sqrt{${fmt(c,'x')} ${fmtNum(d)}}}`;
+                    const raw = `${up} \\cdot ${v} + ${u} \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = ${u} \\cdot ${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, up, vp, steps),
+                        hint: "To røtter med kjerneregel på begge."
+                    };
+                });
+            }
+
+            // Level 5: Expert
+            else {
+                patterns.push(() => {
+                    // (x² + a) · √(x³ + bx + c) - quadratic times cubic root
+                    const c = r(1, 2);
+                    const d = r(1, 3);
+                    const u = `x^2 ${fmtNum(a)}`;
+                    const v = `\\sqrt{x^3 ${fmtNum(c, true)}x ${fmtNum(d)}}`;
+                    const vp = `\\frac{3x^2 ${fmtNum(c)}}{2\\sqrt{x^3 ${fmtNum(c, true)}x ${fmtNum(d)}}}`;
+                    const raw = `2x \\cdot ${v} + (${u}) \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = (${u})${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `2x`, vp, steps),
+                        hint: "Avansert - rot av kubisk polynom."
+                    };
+                });
+
+                patterns.push(() => {
+                    // √(ax² + b) · √(cx² + d) - product of quadratic roots
+                    const c = r(1, 2);
+                    const d = r(1, 3);
+                    const u = `\\sqrt{${fmt(a,'x^2')} ${fmtNum(b)}}`;
+                    const v = `\\sqrt{${fmt(c,'x^2')} ${fmtNum(d)}}`;
+                    const up = `\\frac{${2*a}x}{2\\sqrt{${fmt(a,'x^2')} ${fmtNum(b)}}}`;
+                    const vp = `\\frac{${2*c}x}{2\\sqrt{${fmt(c,'x^2')} ${fmtNum(d)}}}`;
+                    const raw = `${up} \\cdot ${v} + ${u} \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = ${u} \\cdot ${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, up, vp, steps),
+                        hint: "To kvadratiske røtter - kompleks kjerneregel."
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('product', lvl, 'root', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
+        function generateProductExp(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Easy basics
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // x · e^x - simple product
+                    const raw = `1 \\cdot e^x + x \\cdot e^x`;
+                    const factored = `e^x(1 + x)`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = xe^x`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, `e^x`, `1`, `e^x`, steps),
+                        hint: "Klassisk eksempel - faktoriser med e^x."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x + a) · e^x - linear times exponential
+                    const u = `x ${fmtNum(a)}`;
+                    const raw = `1 \\cdot e^x + (${u}) \\cdot e^x`;
+                    const factored = `e^x(1 + ${u})`;
+                    const simp = `e^x(x ${fmtNum(a + 1)})`;
+                    const ans = `f'(x) = ${simp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored} \\\\
+&= ${simp}`;
+                    return {
+                        q: `f(x) = (${u})e^x`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, `e^x`, `1`, `e^x`, steps),
+                        hint: "Lineært uttrykk ganger e^x."
+                    };
+                });
+            }
+
+            // Level 2: Chain rules
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // x² · e^x - quadratic times exponential
+                    const raw = `2x \\cdot e^x + x^2 \\cdot e^x`;
+                    const factored = `e^x(2x + x^2)`;
+                    const simp = `xe^x(2 + x)`;
+                    const ans = `f'(x) = ${simp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored} \\\\
+&= ${simp}`;
+                    return {
+                        q: `f(x) = x^2e^x`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, `e^x`, `2x`, `e^x`, steps),
+                        hint: "x² ganger e^x - faktoriser."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x · e^(ax) - linear times exponential with chain
+                    const raw = `1 \\cdot e^{${a}x} + x \\cdot ${a}e^{${a}x}`;
+                    const factored = `e^{${a}x}(1 + ${a}x)`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = xe^{${a}x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, `e^{${a}x}`, `1`, `${a}e^{${a}x}`, steps),
+                        hint: "Kjerneregel på eksponenten."
+                    };
+                });
+            }
+
+            // Level 3: More complex
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // x² · e^(ax) - quadratic times exponential with chain
+                    const raw = `2x \\cdot e^{${a}x} + x^2 \\cdot ${a}e^{${a}x}`;
+                    const factored = `xe^{${a}x}(2 + ${a}x)`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = x^2e^{${a}x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, `e^{${a}x}`, `2x`, `${a}e^{${a}x}`, steps),
+                        hint: "Kvadratisk ganger eksponential med kjerneregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (ax + b) · e^(cx) - both need chain rule
+                    const c = r(1, 2);
+                    const u = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `e^{${c}x}`;
+                    const raw = `${a} \\cdot ${v} + (${u}) \\cdot ${c}${v}`;
+                    const factored = `${v}(${a} + ${c}(${u}))`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = (${u})${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `${a}`, `${c}${v}`, steps),
+                        hint: "Kjerneregel på begge faktorer."
+                    };
+                });
+            }
+
+            // Level 4: Advanced
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // (x² + a) · e^(bx) - quadratic times exponential with chain
+                    const c = r(1, 2);
+                    const u = `x^2 ${fmtNum(a)}`;
+                    const v = `e^{${c}x}`;
+                    const raw = `2x \\cdot ${v} + (${u}) \\cdot ${c}${v}`;
+                    const factored = `${v}(2x + ${c}(${u}))`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = (${u})${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `2x`, `${c}${v}`, steps),
+                        hint: "Kvadratisk uttrykk ganger eksponential."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x · e^(ax²) - VERY challenging: exponential of quadratic
+                    const inner = `${a}x^2`;
+                    const v = `e^{${inner}}`;
+                    const vp = `${2*a}x \\cdot e^{${inner}}`;
+                    const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
+                    const factored = `${v}(1 + ${2*a}x^2)`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = xe^{${inner}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, vp, steps),
+                        hint: "Vanskelig! Eksponent er kvadratisk."
+                    };
+                });
+            }
+
+            // Level 5: Expert
+            else {
+                patterns.push(() => {
+                    // e^(ax) · e^(bx) · x - triple product with exponentials
+                    const c = r(1, 2);
+                    const u = `e^{${a}x}`;
+                    const v = `e^{${c}x}`;
+                    const w = `x`;
+                    const ans = `f'(x) = ${a}${u} \\cdot ${v} \\cdot ${w} + ${u} \\cdot ${c}${v} \\cdot ${w} + ${u} \\cdot ${v} \\cdot 1`;
+                    const steps = `f'(x) &= u'vw + uv'w + uvw' \\\\
+&= ${ans}`;
+                    return {
+                        q: `f(x) = ${u} \\cdot ${v} \\cdot ${w}`,
+                        a: `$$ ${ans} $$`,
+                        steps: `$$
+\\begin{aligned}
+u &= ${u} & v &= ${v} & w &= ${w} \\\\
+u' &= ${a}${u} & v' &= ${c}${v} & w' &= 1
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+${steps}
+\\end{aligned}
+$$`,
+                        hint: "Trippel-produkt! Bruk formelen: (uvw)' = u'vw + uv'w + uvw'"
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x² + a) · (x + b) · e^(cx) - triple product
+                    const c = r(1, 2);
+                    const d = r(1, 2) * (Math.random() > 0.5 ? 1 : -1);
+                    const u = `x^2 ${fmtNum(a)}`;
+                    const v = `x ${fmtNum(d)}`;
+                    const w = `e^{${c}x}`;
+                    const ans = `f'(x) = 2x(${v})(${w}) + (${u}) \\cdot 1 \\cdot ${w} + (${u})(${v}) \\cdot ${c}${w}`;
+                    const steps = `f'(x) &= u'vw + uv'w + uvw' \\\\
+&= ${ans}`;
+                    return {
+                        q: `f(x) = (${u})(${v})${w}`,
+                        a: `$$ ${ans} $$`,
+                        steps: `$$
+\\begin{aligned}
+u &= ${u} & v &= ${v} & w &= ${w} \\\\
+u' &= 2x & v' &= 1 & w' &= ${c}${w}
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+${steps}
+\\end{aligned}
+$$`,
+                        hint: "Trippel-produkt! Bruk formelen: (uvw)' = u'vw + uv'w + uvw'"
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('product', lvl, 'exp', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
+        function generateProductLog(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Easy basics
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // x · ln(x) - simple product
+                    const raw = `1 \\cdot \\ln x + x \\cdot \\frac{1}{x}`;
+                    const simp = `\\ln x + 1`;
+                    const ans = `f'(x) = ${simp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp}`;
+                    return {
+                        q: `f(x) = x\\ln x`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, `\\ln x`, `1`, `\\frac{1}{x}`, steps),
+                        hint: "Klassisk eksempel - x/x = 1."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x + a) · ln(x) - linear times logarithm
+                    const u = `x ${fmtNum(a)}`;
+                    const raw = `1 \\cdot \\ln x + (${u}) \\cdot \\frac{1}{x}`;
+                    const simp = `\\ln x + \\frac{${u}}{x}`;
+                    const ans = `f'(x) = ${simp}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp}`;
+                    return {
+                        q: `f(x) = (${u})\\ln x`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, `\\ln x`, `1`, `\\frac{1}{x}`, steps),
+                        hint: "Lineært uttrykk ganger logaritme."
+                    };
+                });
+            }
+
+            // Level 2: Quadratic
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // x² · ln(x) - quadratic times logarithm
+                    const raw = `2x \\cdot \\ln x + x^2 \\cdot \\frac{1}{x}`;
+                    const simp = `2x\\ln x + x`;
+                    const factored = `x(2\\ln x + 1)`;
+                    const ans = `f'(x) = ${factored}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${simp} \\\\
+&= ${factored}`;
+                    return {
+                        q: `f(x) = x^2\\ln x`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, `\\ln x`, `2x`, `\\frac{1}{x}`, steps),
+                        hint: "x² ganger ln(x) - faktoriser."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x · ln(ax + b) - linear times logarithm with chain
+                    const inner = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `\\ln(${inner})`;
+                    const vp = `\\frac{${a}}{${inner}}`;
+                    const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = x\\ln(${inner})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, vp, steps),
+                        hint: "Kjerneregel på logaritmen."
+                    };
+                });
+            }
+
+            // Level 3: Chain rules
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // x · ln(ax + b) more complex
+                    const inner = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `\\ln(${inner})`;
+                    const vp = `\\frac{${a}}{${inner}}`;
+                    const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
+                    const ans = `f'(x) = \\ln(${inner}) + \\frac{${a}x}{${inner}}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${ans}`;
+                    return {
+                        q: `f(x) = x\\ln(${inner})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, vp, steps),
+                        hint: "Produktregel og kjerneregel kombinert."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x² · ln(ax + b) - quadratic times log with chain
+                    const inner = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const v = `\\ln(${inner})`;
+                    const vp = `\\frac{${a}}{${inner}}`;
+                    const raw = `2x \\cdot ${v} + x^2 \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = x^2\\ln(${inner})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, v, `2x`, vp, steps),
+                        hint: "Kvadratisk ganger logaritme med kjerneregel."
+                    };
+                });
+            }
+
+            // Level 4: Advanced
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // (x² + a) · ln(bx + c) - quadratic times log with chain
+                    const c = r(1, 2);
+                    const d = r(1, 3);
+                    const u = `x^2 ${fmtNum(a)}`;
+                    const inner = `${fmt(c,'x')} ${fmtNum(d)}`;
+                    const v = `\\ln(${inner})`;
+                    const vp = `\\frac{${c}}{${inner}}`;
+                    const raw = `2x \\cdot ${v} + (${u}) \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = (${u})\\ln(${inner})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `2x`, vp, steps),
+                        hint: "Kvadratisk uttrykk ganger logaritme."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x · ln(x² + a) - linear times log of quadratic
+                    const inner = `x^2 ${fmtNum(a)}`;
+                    const v = `\\ln(${inner})`;
+                    const vp = `\\frac{2x}{${inner}}`;
+                    const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
+                    const ans = `f'(x) = ${v} + \\frac{2x^2}{${inner}}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw} \\\\
+&= ${ans}`;
+                    return {
+                        q: `f(x) = x\\ln(${inner})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, v, `1`, vp, steps),
+                        hint: "Logaritme av kvadratisk uttrykk - kjerneregel."
+                    };
+                });
+            }
+
+            // Level 5: Expert
+            else {
+                patterns.push(() => {
+                    // (x² + a) · ln(bx² + c) - quadratic times log of quadratic
+                    const c = r(1, 2);
+                    const d = r(1, 3);
+                    const u = `x^2 ${fmtNum(a)}`;
+                    const inner = `${fmt(c,'x^2')} ${fmtNum(d)}`;
+                    const v = `\\ln(${inner})`;
+                    const vp = `\\frac{${2*c}x}{${inner}}`;
+                    const raw = `2x \\cdot ${v} + (${u}) \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = (${u})\\ln(${inner})`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, `2x`, vp, steps),
+                        hint: "Avansert - logaritme av kvadratisk uttrykk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // ln(ax + b) · ln(cx + d) - product of two logarithms!
+                    const c = r(1, 2);
+                    const d = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const inner1 = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const inner2 = `${fmt(c,'x')} ${fmtNum(d)}`;
+                    const u = `\\ln(${inner1})`;
+                    const v = `\\ln(${inner2})`;
+                    const up = `\\frac{${a}}{${inner1}}`;
+                    const vp = `\\frac{${c}}{${inner2}}`;
+                    const raw = `${up} \\cdot ${v} + ${u} \\cdot ${vp}`;
+                    const ans = `f'(x) = ${raw}`;
+                    const steps = `f'(x) &= u'v + uv' \\\\
+&= ${raw}`;
+                    return {
+                        q: `f(x) = ${u} \\cdot ${v}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(u, v, up, vp, steps),
+                        hint: "Ekstremt avansert - produkt av to logaritmer!"
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('product', lvl, 'log', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
+        function generateQuotientProblem(type, lvl, a, b, n, add) {
+            const r = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+            const par = (val) => val < 0 ? `(${val})` : val;
+
+            // Helper to create aligned environment steps
+            const makeAlignedSteps = (u, v, up, vp, steps) => {
+                return `$$
+\\begin{aligned}
+u &= ${u} & v &= ${v} \\\\
+u' &= ${up} & v' &= ${vp}
+\\end{aligned}
+$$
+$$
+\\begin{aligned}
+${steps}
+\\end{aligned}
+$$`;
+            };
+
+            if (type === 'poly') {
+                generateQuotientPoly(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+            else if (type === 'root') {
+                generateQuotientRoot(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+            else if (type === 'exp') {
+                generateQuotientExp(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+            else if (type === 'log') {
+                generateQuotientLog(lvl, a, b, n, add, makeAlignedSteps, par, r);
+            }
+        }
+
+        function generateQuotientPoly(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Basic linear/linear, quadratic/linear
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // (ax + b)/(cx + d) - linear over linear
+                    const c = r(1, 3);
+                    const d = r(1, 4) * (Math.random() > 0.5 ? 1 : -1);
+                    const num = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const denom = `${fmt(c,'x')} ${fmtNum(d)}`;
+                    const numDeriv = `${a*c} - ${a*c}`;
+                    const rawNum = `${a}(${denom}) - (${num})(${c})`;
+                    const simplifiedNum = `${a*d - b*c}`;
+                    const ans = `f'(x) = \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `${a}`, `${c}`, steps),
+                        hint: "Linear over linear - konstantene forsvinner ved derivasjon."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x^2/(x + a) - quadratic over linear
+                    const denom = `x ${fmtNum(a)}`;
+                    const rawNum = `2x(${denom}) - x^2 \\cdot 1`;
+                    const expandedNum = `2x^2 ${fmtNum(2*a, true)}x - x^2`;
+                    const simplifiedNum = `x^2 ${fmtNum(2*a, true)}x`;
+                    const factoredNum = `x(x ${fmtNum(2*a)})`;
+                    const ans = `f'(x) = \\frac{${factoredNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${simplifiedNum}}{(${denom})^2} \\\\
+&= \\frac{${factoredNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{x^2}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, denom, `2x`, `1`, steps),
+                        hint: "Kvadratisk polynom over lineært uttrykk."
+                    };
+                });
+            }
+
+            // Level 2: Linear/quadratic, quadratic/quadratic
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // x/(x^2 + a) - linear over quadratic
+                    const denom = `x^2 ${fmtNum(a)}`;
+                    const rawNum = `1 \\cdot (${denom}) - x \\cdot 2x`;
+                    const simplifiedNum = `${fmtNum(a, true)} - x^2`;
+                    const ans = `f'(x) = \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{x}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, denom, `1`, `2x`, steps),
+                        hint: "Lineær over kvadratisk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x + b)/(x^2 + a) - linear over quadratic
+                    const num = `x ${fmtNum(b)}`;
+                    const denom = `x^2 ${fmtNum(a)}`;
+                    const rawNum = `1 \\cdot (${denom}) - (${num}) \\cdot 2x`;
+                    const expandedNum = `x^2 ${fmtNum(a)} - 2x^2 ${fmtNum(2*b)}x`;
+                    const simplifiedNum = `-x^2 ${fmtNum(-2*b)}x ${fmtNum(a)}`;
+                    const ans = `f'(x) = \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `1`, `2x`, steps),
+                        hint: "Lineær over kvadratisk - ekspander teller."
+                    };
+                });
+            }
+
+            // Level 3: Chain rule integration, squared terms
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // (ax + b)^2/(x + c) - squared numerator
+                    const c = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const num = `(${fmt(a,'x')} ${fmtNum(b)})^2`;
+                    const denom = `x ${fmtNum(c)}`;
+                    const numDeriv = `2(${fmt(a,'x')} ${fmtNum(b)}) \\cdot ${a}`;
+                    const rawNum = `${numDeriv}(${denom}) - ${num} \\cdot 1`;
+                    const ans = `f'(x) = \\frac{${numDeriv}(${denom}) - ${num}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `1`, steps),
+                        hint: "Kvadrert teller - bruk kjerneregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x^3/(x^2 + a) - cubic over quadratic
+                    const denom = `x^2 ${fmtNum(a)}`;
+                    const rawNum = `3x^2(${denom}) - x^3 \\cdot 2x`;
+                    const expandedNum = `3x^4 ${fmtNum(3*a, true)}x^2 - 2x^4`;
+                    const simplifiedNum = `x^4 ${fmtNum(3*a, true)}x^2`;
+                    const factoredNum = `x^2(x^2 ${fmtNum(3*a)})`;
+                    const ans = `f'(x) = \\frac{${factoredNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${simplifiedNum}}{(${denom})^2} \\\\
+&= \\frac{${factoredNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{x^3}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^3`, denom, `3x^2`, `2x`, steps),
+                        hint: "Kubisk over kvadratisk - faktoriser teller."
+                    };
+                });
+            }
+
+            // Level 4: Complex quadratic expressions
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // (x^2 + b)/(x^2 + a) - quadratic over quadratic
+                    const num = `x^2 ${fmtNum(b)}`;
+                    const denom = `x^2 ${fmtNum(a)}`;
+                    const rawNum = `2x(${denom}) - (${num}) \\cdot 2x`;
+                    const expandedNum = `2x^3 ${fmtNum(2*a, true)}x - 2x^3 ${fmtNum(2*b)}x`;
+                    const simplifiedNum = `${2*a - 2*b}x`;
+                    const ans = `f'(x) = \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `2x`, `2x`, steps),
+                        hint: "Kvadratisk over kvadratisk - mye forenkles."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (ax + b)/(x^2 + c) - linear over quadratic with coefficients
+                    const c = r(1, 4);
+                    const num = `${fmt(a,'x')} ${fmtNum(b)}`;
+                    const denom = `x^2 ${fmtNum(c)}`;
+                    const rawNum = `${a}(${denom}) - (${num}) \\cdot 2x`;
+                    const expandedNum = `${a}x^2 ${fmtNum(a*c)} - 2x^2 ${fmtNum(2*b)}x`;
+                    const simplifiedNum = `${a-2}x^2 ${fmtNum(-2*b)}x ${fmtNum(a*c)}`;
+                    const ans = `f'(x) = \\frac{${simplifiedNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `${a}`, `2x`, steps),
+                        hint: "Lineær over kvadratisk med koeffisienter."
+                    };
+                });
+            }
+
+            // Level 5: Expert - cubic polynomials
+            else {
+                patterns.push(() => {
+                    // (x^2 + a)/(x^3 + b) - quadratic over cubic
+                    const num = `x^2 ${fmtNum(a)}`;
+                    const denom = `x^3 ${fmtNum(b)}`;
+                    const rawNum = `2x(${denom}) - (${num}) \\cdot 3x^2`;
+                    const ans = `f'(x) = \\frac{2x(${denom}) - 3x^2(${num})}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `2x`, `3x^2`, steps),
+                        hint: "Kvadratisk over kubisk polynom."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x^n/(x^m + a) where n, m vary
+                    const m = r(2, 3);
+                    const num = `x${fmtPow(n)}`;
+                    const denom = `x${fmtPow(m)} ${fmtNum(a)}`;
+                    const rawNum = `${n}x${fmtPow(n-1)}(${denom}) - x${fmtPow(n)} \\cdot ${m}x${fmtPow(m-1)}`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `${n}x${fmtPow(n-1)}`, `${m}x${fmtPow(m-1)}`, steps),
+                        hint: "Høyere grads polynomer."
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('quotient', lvl, 'poly', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
+        function generateQuotientRoot(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Basic root patterns
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // √x/(x + a) - root over linear (current pattern, keep it)
+                    const denom = `x ${fmtNum(a)}`;
+                    const rawNum = `\\frac{1}{2\\sqrt{x}}(${denom}) - \\sqrt{x}`;
+                    const combinedNum = `\\frac{(${denom}) - 2x}{2\\sqrt{x}}`;
+                    const simpNum = `${fmtNum(a, true)} - x`;
+                    const ans = `f'(x) = \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${combinedNum}}{(${denom})^2} \\\\
+&= \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{\\sqrt{x}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`\\sqrt{x}`, denom, `\\frac{1}{2\\sqrt{x}}`, `1`, steps),
+                        hint: "Kvadratrot over lineært uttrykk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // √x/x = x^(-1/2) - simplifies nicely
+                    const rawNum = `\\frac{1}{2\\sqrt{x}} \\cdot x - \\sqrt{x} \\cdot 1`;
+                    const combinedNum = `\\frac{x - 2x}{2\\sqrt{x}}`;
+                    const simpNum = `-x`;
+                    const ans = `f'(x) = \\frac{-1}{2\\sqrt{x}}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x^2} \\\\
+&= \\frac{${combinedNum}}{x^2} \\\\
+&= \\frac{-x}{2\\sqrt{x} \\cdot x^2} \\\\
+&= \\frac{-1}{2\\sqrt{x}x} \\\\
+&= \\frac{-1}{2x\\sqrt{x}}`;
+                    return {
+                        q: `f(x) = \\frac{\\sqrt{x}}{x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`\\sqrt{x}`, `x`, `\\frac{1}{2\\sqrt{x}}`, `1`, steps),
+                        hint: "Kan også skrives som x^{-1/2} og deriveres direkte."
+                    };
+                });
+            }
+
+            // Level 2: Root over quadratic, linear over root
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // √x/(x^2 + a) - root over quadratic
+                    const denom = `x^2 ${fmtNum(a)}`;
+                    const rawNum = `\\frac{1}{2\\sqrt{x}}(${denom}) - \\sqrt{x} \\cdot 2x`;
+                    const combinedNum = `\\frac{(${denom}) - 4x^2}{2\\sqrt{x}}`;
+                    const simpNum = `${fmtNum(a, true)} - 3x^2`;
+                    const ans = `f'(x) = \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${combinedNum}}{(${denom})^2} \\\\
+&= \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{\\sqrt{x}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`\\sqrt{x}`, denom, `\\frac{1}{2\\sqrt{x}}`, `2x`, steps),
+                        hint: "Rot over kvadratisk uttrykk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x + a)/√x - linear over root
+                    const num = `x ${fmtNum(a)}`;
+                    const rawNum = `1 \\cdot \\sqrt{x} - (${num}) \\cdot \\frac{1}{2\\sqrt{x}}`;
+                    const combinedNum = `\\frac{2x - (${num})}{2\\sqrt{x}}`;
+                    const simpNum = `x ${fmtNum(-a)}`;
+                    const ans = `f'(x) = \\frac{${simpNum}}{2x}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x} \\\\
+&= \\frac{${combinedNum}}{x} \\\\
+&= \\frac{${simpNum}}{2x}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{\\sqrt{x}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, `\\sqrt{x}`, `1`, `\\frac{1}{2\\sqrt{x}}`, steps),
+                        hint: "Lineær over kvadratrot."
+                    };
+                });
+            }
+
+            // Level 3: Root with chain rule
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // √(ax + b)/(x + c) - root with chain in numerator
+                    const c = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const num = `\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const denom = `x ${fmtNum(c)}`;
+                    const numDeriv = `\\frac{${a}}{2\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}}`;
+                    const rawNum = `${numDeriv}(${denom}) - ${num}`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `1`, steps),
+                        hint: "Rot med kjerneregel i teller."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x/√(ax + b) - linear over root with chain
+                    const num = `x`;
+                    const denom = `\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const denomDeriv = `\\frac{${a}}{2\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}}`;
+                    const rawNum = `1 \\cdot ${denom} - x \\cdot ${denomDeriv}`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${rawNum}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `1`, denomDeriv, steps),
+                        hint: "Rot med kjerneregel i nevner."
+                    };
+                });
+            }
+
+            // Level 4: Complex root expressions
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // x^2/√(ax + b) - quadratic over root
+                    const num = `x^2`;
+                    const denom = `\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const denomDeriv = `\\frac{${a}}{2\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}}`;
+                    const rawNum = `2x \\cdot ${denom} - x^2 \\cdot ${denomDeriv}`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${rawNum}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `2x`, denomDeriv, steps),
+                        hint: "Kvadratisk over rot med kjerneregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // √(x^2 + a)/x - complex root over x
+                    const num = `\\sqrt{x^2 ${fmtNum(a)}}`;
+                    const numDeriv = `\\frac{2x}{2\\sqrt{x^2 ${fmtNum(a)}}}`;
+                    const denom = `x`;
+                    const rawNum = `${numDeriv} \\cdot x - ${num} \\cdot 1`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{x^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `1`, steps),
+                        hint: "Rot av kvadratisk uttrykk over x."
+                    };
+                });
+            }
+
+            // Level 5: Expert - root ratios, cubic roots
+            else {
+                patterns.push(() => {
+                    // √(x^3 + a)/(x^2 + b) - cubic root over quadratic
+                    const num = `\\sqrt{x^3 ${fmtNum(a)}}`;
+                    const numDeriv = `\\frac{3x^2}{2\\sqrt{x^3 ${fmtNum(a)}}}`;
+                    const denom = `x^2 ${fmtNum(b)}`;
+                    const rawNum = `${numDeriv}(${denom}) - ${num} \\cdot 2x`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `2x`, steps),
+                        hint: "Rot av kubisk over kvadratisk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x^2 + a)/√(x^3 + b) - quadratic over cubic root
+                    const num = `x^2 ${fmtNum(a)}`;
+                    const denom = `\\sqrt{x^3 ${fmtNum(b)}}`;
+                    const denomDeriv = `\\frac{3x^2}{2\\sqrt{x^3 ${fmtNum(b)}}}`;
+                    const rawNum = `2x \\cdot ${denom} - (${num}) \\cdot ${denomDeriv}`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{x^3 ${fmtNum(b)}}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${rawNum}}{x^3 ${fmtNum(b)}}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `2x`, denomDeriv, steps),
+                        hint: "Kvadratisk over rot av kubisk."
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('quotient', lvl, 'root', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
+        function generateQuotientExp(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Exponential over linear, linear over exponential
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // e^x/(x + a) - exponential over linear
+                    const denom = `x ${fmtNum(a)}`;
+                    const rawNum = `e^x(${denom}) - e^x \\cdot 1`;
+                    const factoredNum = `e^x(${denom} - 1)`;
+                    const simpDenom = `x ${fmtNum(a-1)}`;
+                    const ans = `f'(x) = \\frac{e^x(${simpDenom})}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{e^x(${simpDenom})}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{e^x}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`e^x`, denom, `e^x`, `1`, steps),
+                        hint: "Eksponentialfunksjon over lineært uttrykk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x/e^x - linear over exponential
+                    const rawNum = `1 \\cdot e^x - x \\cdot e^x`;
+                    const factoredNum = `e^x(1 - x)`;
+                    const ans = `f'(x) = \\frac{1 - x}{e^x}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(e^x)^2} \\\\
+&= \\frac{${factoredNum}}{e^{2x}} \\\\
+&= \\frac{1 - x}{e^x}`;
+                    return {
+                        q: `f(x) = \\frac{x}{e^x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, `e^x`, `1`, `e^x`, steps),
+                        hint: "Lineær over eksponentialfunksjon."
+                    };
+                });
+            }
+
+            // Level 2: Exponential with chain, polynomial over exponential
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // e^(ax)/(x + b) - exponential with chain over linear
+                    const denom = `x ${fmtNum(b)}`;
+                    const rawNum = `${a}e^{${a}x}(${denom}) - e^{${a}x} \\cdot 1`;
+                    const factoredNum = `e^{${a}x}(${a}(${denom}) - 1)`;
+                    const simpNum = `${a}x ${fmtNum(a*b - 1)}`;
+                    const ans = `f'(x) = \\frac{e^{${a}x}(${simpNum})}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{e^{${a}x}(${simpNum})}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{e^{${a}x}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`e^{${a}x}`, denom, `${a}e^{${a}x}`, `1`, steps),
+                        hint: "Eksponential med kjerneregel over lineært."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x^2/e^x - quadratic over exponential
+                    const rawNum = `2x \\cdot e^x - x^2 \\cdot e^x`;
+                    const factoredNum = `e^x(2x - x^2)`;
+                    const simpNum = `x(2 - x)`;
+                    const ans = `f'(x) = \\frac{${simpNum}}{e^x}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{e^{2x}} \\\\
+&= \\frac{${factoredNum}}{e^{2x}} \\\\
+&= \\frac{${simpNum}}{e^x}`;
+                    return {
+                        q: `f(x) = \\frac{x^2}{e^x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x^2`, `e^x`, `2x`, `e^x`, steps),
+                        hint: "Kvadratisk over eksponential."
+                    };
+                });
+            }
+
+            // Level 3: More complex chain rules
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // e^(ax)/(x^2 + b) - exponential with chain over quadratic
+                    const denom = `x^2 ${fmtNum(b)}`;
+                    const rawNum = `${a}e^{${a}x}(${denom}) - e^{${a}x} \\cdot 2x`;
+                    const factoredNum = `e^{${a}x}(${a}(${denom}) - 2x)`;
+                    const ans = `f'(x) = \\frac{${factoredNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${factoredNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{e^{${a}x}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`e^{${a}x}`, denom, `${a}e^{${a}x}`, `2x`, steps),
+                        hint: "Eksponential over kvadratisk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (x^2 + a)/e^(bx) - quadratic over exponential with chain
+                    const num = `x^2 ${fmtNum(a)}`;
+                    const denom = `e^{${b}x}`;
+                    const rawNum = `2x \\cdot ${denom} - (${num}) \\cdot ${b}${denom}`;
+                    const factoredNum = `${denom}(2x - ${b}(${num}))`;
+                    const simpNum = `2x - ${b}x^2 ${fmtNum(b*a)}`;
+                    const ans = `f'(x) = \\frac{${simpNum}}{${denom}}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${simpNum}}{${denom}}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, `2x`, `${b}${denom}`, steps),
+                        hint: "Kvadratisk over eksponential med kjerneregel."
+                    };
+                });
+            }
+
+            // Level 4: Product in numerator, complex expressions
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // x·e^x/(x^2 + a) - product in numerator
+                    const num = `x \\cdot e^x`;
+                    const numDeriv = `e^x + x \\cdot e^x`;
+                    const denom = `x^2 ${fmtNum(a)}`;
+                    const rawNum = `(${numDeriv})(${denom}) - ${num} \\cdot 2x`;
+                    const ans = `f'(x) = \\frac{(${numDeriv})(${denom}) - 2x^2e^x}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `2x`, steps),
+                        hint: "Produkt i teller - bruk produktregel først."
+                    };
+                });
+
+                patterns.push(() => {
+                    // e^(ax + b)/(x^2 + c) - shifted exponential over quadratic
+                    const c = r(1, 4);
+                    const num = `e^{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const numDeriv = `${a}e^{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const denom = `x^2 ${fmtNum(c)}`;
+                    const rawNum = `${numDeriv}(${denom}) - ${num} \\cdot 2x`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `2x`, steps),
+                        hint: "Eksponential med lineær ekponent."
+                    };
+                });
+            }
+
+            // Level 5: Expert - polynomial-exponential products, complex chains
+            else {
+                patterns.push(() => {
+                    // x^2·e^(ax)/(bx + c) - quadratic-exponential product over linear
+                    const c = r(1, 3);
+                    const num = `x^2 \\cdot e^{${a}x}`;
+                    const numDeriv = `2x \\cdot e^{${a}x} + x^2 \\cdot ${a}e^{${a}x}`;
+                    const denom = `${fmt(b,'x')} ${fmtNum(c)}`;
+                    const rawNum = `(${numDeriv})(${denom}) - ${num} \\cdot ${b}`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `${b}`, steps),
+                        hint: "Produkt i teller - kombiner produkt- og kjerneregel."
+                    };
+                });
+
+                patterns.push(() => {
+                    // (ax + b)·e^(cx)/(dx^2 + e) - linear-exponential product over quadratic
+                    const c = r(1, 2);
+                    const d = r(1, 2);
+                    const e = r(1, 4);
+                    const num = `(${fmt(a,'x')} ${fmtNum(b)}) \\cdot e^{${c}x}`;
+                    const numDeriv = `${a}e^{${c}x} + (${fmt(a,'x')} ${fmtNum(b)}) \\cdot ${c}e^{${c}x}`;
+                    const denom = `${fmt(d,'x^2')} ${fmtNum(e)}`;
+                    const rawNum = `(${numDeriv})(${denom}) - ${num} \\cdot ${2*d}x`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `${2*d}x`, steps),
+                        hint: "Avansert - produktregel i teller kombinert med brøkregel."
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('quotient', lvl, 'exp', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
+        function generateQuotientLog(lvl, a, b, n, add, makeAlignedSteps, par, r) {
+            const patterns = [];
+
+            // Level 1: Basic logarithm patterns
+            if (lvl === 1) {
+                patterns.push(() => {
+                    // ln(x)/x - logarithm over x (simpler than current x^n)
+                    const rawNum = `\\frac{1}{x} \\cdot x - \\ln x \\cdot 1`;
+                    const ans = `f'(x) = \\frac{1 - \\ln x}{x^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x^2} \\\\
+&= \\frac{1 - \\ln x}{x^2}`;
+                    return {
+                        q: `f(x) = \\frac{\\ln x}{x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`\\ln x`, `x`, `\\frac{1}{x}`, `1`, steps),
+                        hint: "Logaritme over x - klassisk oppgave."
+                    };
+                });
+
+                patterns.push(() => {
+                    // x/ln(x) - x over logarithm
+                    const rawNum = `1 \\cdot \\ln x - x \\cdot \\frac{1}{x}`;
+                    const ans = `f'(x) = \\frac{\\ln x - 1}{(\\ln x)^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(\\ln x)^2} \\\\
+&= \\frac{\\ln x - 1}{(\\ln x)^2}`;
+                    return {
+                        q: `f(x) = \\frac{x}{\\ln x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`x`, `\\ln x`, `1`, `\\frac{1}{x}`, steps),
+                        hint: "x over logaritme - interessant variant."
+                    };
+                });
+            }
+
+            // Level 2: Logarithm over quadratic, quadratic over logarithm
+            else if (lvl === 2) {
+                patterns.push(() => {
+                    // ln(x)/(x + a) - logarithm over linear
+                    const denom = `x ${fmtNum(a)}`;
+                    const rawNum = `\\frac{1}{x}(${denom}) - \\ln x \\cdot 1`;
+                    const expandedNum = `\\frac{${denom}}{x} - \\ln x`;
+                    const combinedNum = `\\frac{${denom} - x\\ln x}{x}`;
+                    const ans = `f'(x) = \\frac{${denom} - x\\ln x}{x(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2} \\\\
+&= \\frac{${combinedNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{\\ln x}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`\\ln x`, denom, `\\frac{1}{x}`, `1`, steps),
+                        hint: "Logaritme over lineært uttrykk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // ln(x)/x^2 - logarithm over x squared (current pattern at level 2)
+                    const rawNum = `\\frac{1}{x} \\cdot x^2 - \\ln x \\cdot 2x`;
+                    const factoredNum = `x(1 - 2\\ln x)`;
+                    const ans = `f'(x) = \\frac{1 - 2\\ln x}{x^3}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x^4} \\\\
+&= \\frac{${factoredNum}}{x^4} \\\\
+&= \\frac{1 - 2\\ln x}{x^3}`;
+                    return {
+                        q: `f(x) = \\frac{\\ln x}{x^2}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`\\ln x`, `x^2`, `\\frac{1}{x}`, `2x`, steps),
+                        hint: "Logaritme over x^2."
+                    };
+                });
+            }
+
+            // Level 3: Logarithm with chain rule
+            else if (lvl === 3) {
+                patterns.push(() => {
+                    // ln(ax + b)/x - logarithm with chain over x
+                    const num = `\\ln(${fmt(a,'x')} ${fmtNum(b)})`;
+                    const numDeriv = `\\frac{${a}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const rawNum = `${numDeriv} \\cdot x - ${num} \\cdot 1`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{x^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, `x`, numDeriv, `1`, steps),
+                        hint: "Logaritme med kjerneregel over x."
+                    };
+                });
+
+                patterns.push(() => {
+                    // ln(x)/√x - logarithm over root
+                    const rawNum = `\\frac{1}{x} \\cdot \\sqrt{x} - \\ln x \\cdot \\frac{1}{2\\sqrt{x}}`;
+                    const combinedNum = `\\frac{2 - \\ln x}{2\\sqrt{x}}`;
+                    const ans = `f'(x) = \\frac{2 - \\ln x}{2x}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x} \\\\
+&= \\frac{${combinedNum}}{x} \\\\
+&= \\frac{2 - \\ln x}{2x}`;
+                    return {
+                        q: `f(x) = \\frac{\\ln x}{\\sqrt{x}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(`\\ln x`, `\\sqrt{x}`, `\\frac{1}{x}`, `\\frac{1}{2\\sqrt{x}}`, steps),
+                        hint: "Logaritme over kvadratrot."
+                    };
+                });
+            }
+
+            // Level 4: More complex logarithm expressions
+            else if (lvl === 4) {
+                patterns.push(() => {
+                    // ln(x^2 + a)/x - logarithm of quadratic over x
+                    const num = `\\ln(x^2 ${fmtNum(a)})`;
+                    const numDeriv = `\\frac{2x}{x^2 ${fmtNum(a)}}`;
+                    const rawNum = `${numDeriv} \\cdot x - ${num} \\cdot 1`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{x^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{x^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{x}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, `x`, numDeriv, `1`, steps),
+                        hint: "Logaritme av kvadratisk uttrykk."
+                    };
+                });
+
+                patterns.push(() => {
+                    // ln(ax + b)/(x^2 + c) - logarithm with chain over quadratic
+                    const c = r(1, 4);
+                    const num = `\\ln(${fmt(a,'x')} ${fmtNum(b)})`;
+                    const numDeriv = `\\frac{${a}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const denom = `x^2 ${fmtNum(c)}`;
+                    const rawNum = `${numDeriv}(${denom}) - ${num} \\cdot 2x`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `2x`, steps),
+                        hint: "Logaritme med kjerneregel over kvadratisk."
+                    };
+                });
+            }
+
+            // Level 5: Expert - products with logarithms, complex expressions
+            else {
+                patterns.push(() => {
+                    // x·ln(ax + b)/(x^2 + c) - product with logarithm over quadratic
+                    const c = r(1, 4);
+                    const num = `x \\cdot \\ln(${fmt(a,'x')} ${fmtNum(b)})`;
+                    const numDeriv = `\\ln(${fmt(a,'x')} ${fmtNum(b)}) + x \\cdot \\frac{${a}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+                    const denom = `x^2 ${fmtNum(c)}`;
+                    const rawNum = `(${numDeriv})(${denom}) - ${num} \\cdot 2x`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `2x`, steps),
+                        hint: "Produkt med logaritme - bruk produktregel først."
+                    };
+                });
+
+                patterns.push(() => {
+                    // ln(ax^2 + b)/(cx + d) - logarithm of quadratic over linear
+                    const c = r(1, 2);
+                    const d = r(1, 3) * (Math.random() > 0.5 ? 1 : -1);
+                    const num = `\\ln(${fmt(a,'x^2')} ${fmtNum(b)})`;
+                    const numDeriv = `\\frac{${2*a}x}{${fmt(a,'x^2')} ${fmtNum(b)}}`;
+                    const denom = `${fmt(c,'x')} ${fmtNum(d)}`;
+                    const rawNum = `${numDeriv}(${denom}) - ${num} \\cdot ${c}`;
+                    const ans = `f'(x) = \\frac{${rawNum}}{(${denom})^2}`;
+                    const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
+&= \\frac{${rawNum}}{(${denom})^2}`;
+                    return {
+                        q: `f(x) = \\frac{${num}}{${denom}}`,
+                        a: `$$ ${ans} $$`,
+                        steps: makeAlignedSteps(num, denom, numDeriv, `${c}`, steps),
+                        hint: "Logaritme av kvadratisk over lineært."
+                    };
+                });
+            }
+
+            const pattern = patterns[r(0, patterns.length - 1)];
+            const prob = pattern();
+            add('quotient', lvl, 'log', prob.q, prob.a, prob.steps, prob.hint);
+        }
+
         function generateSingleProblem(rule, lvl, type, add) {
             const r = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
             const maxC = lvl * 2;
@@ -1381,116 +3131,12 @@ $$`;
 
             // --- PRODUCT RULE ---
             else if (rule === 'product') {
-                let u_tex = "", v_tex = "", up_tex = "", vp_tex = "", raw_tex = "", simp_tex = "", q = "", hint = "";
-
-                if (type === 'poly') {
-                    const term2 = `${fmt(a,'x')} ${fmtNum(b)}`;
-                    q = `f(x) = x^${n}(${term2})`;
-                    u_tex = `x^${n}`;
-                    v_tex = term2;
-                    up_tex = `${n}x${fmtPow(n-1)}`;
-                    vp_tex = `${a}`;
-                    raw_tex = `${up_tex}(${term2}) + ${u_tex}(${a})`;
-                    simp_tex = `x${fmtPow(n-1)}(${a*(n+1)}x + ${n*b})`;
-                    hint = "Bruk produktregelen: u'v + uv'.";
-                }
-                else if (type === 'exp') {
-                    q = `f(x) = x^${n} e^{${a}x}`;
-                    u_tex = `x^${n}`;
-                    v_tex = `e^{${a}x}`;
-                    up_tex = `${n}x${fmtPow(n-1)}`;
-                    vp_tex = `${a}e^{${a}x}`;
-                    raw_tex = `${up_tex} \\cdot ${v_tex} + ${u_tex} \\cdot ${vp_tex}`;
-                    simp_tex = `x${fmtPow(n-1)}e^{${a}x}(${n} + ${a}x)`;
-                    hint = "Produktregel + Kjerneregel på e.";
-                }
-                else if (type === 'log') {
-                    q = `f(x) = x^${n} \\ln(x)`;
-                    u_tex = `x^${n}`;
-                    v_tex = `\\ln(x)`;
-                    up_tex = `${n}x${fmtPow(n-1)}`;
-                    vp_tex = `\\frac{1}{x}`;
-                    const step1 = `${up_tex} \\ln(x) + ${u_tex} \\cdot \\frac{1}{x}`;
-                    const step2 = `${up_tex} \\ln(x) + x${fmtPow(n-1)}`;
-                    raw_tex = `${step1} \\\\ &= ${step2}`; 
-                    simp_tex = `x${fmtPow(n-1)}(${n}\\ln x + 1)`;
-                    hint = "Husk at x^n * (1/x) blir x^(n-1).";
-                }
-                else {
-                    q = `f(x) = x \\sqrt{x ${fmtNum(b)}}`;
-                    u_tex = `x`;
-                    v_tex = `\\sqrt{x ${fmtNum(b)}}`;
-                    up_tex = `1`;
-                    vp_tex = `\\frac{1}{2\\sqrt{x ${fmtNum(b)}}}`;
-                    raw_tex = `1 \\cdot ${v_tex} + x \\cdot ${vp_tex}`;
-                    simp_tex = `\\frac{3x ${fmtNum(2*b)}}{2\\sqrt{x ${fmtNum(b)}}}`;
-                    hint = "Produktregel.";
-                }
-
-                const steps = `$$
-\\begin{aligned}
-u &= ${u_tex} & v &= ${v_tex} \\\\
-u' &= ${up_tex} & v' &= ${vp_tex}
-\\end{aligned}
-$$
-$$
-\\begin{aligned}
-f'(x) &= u'v + uv' \\\\
-&= ${raw_tex} \\\\
-&= ${simp_tex}
-\\end{aligned}
-$$`;
-
-                add(rule, lvl, type, q, `$$ f'(x) = ${simp_tex} $$`, steps, hint);
+                generateProductProblem(type, lvl, a, b, n, add);
             }
             
             // --- QUOTIENT RULE ---
             else if (rule === 'quotient') {
-                 if (type === 'poly') {
-                    const denom = `${fmt(b,'x')} ${fmtNum(n)}`;
-                    q = `f(x) = \\frac{${a}}{${denom}}`;
-                    const rawNum = `0 \\cdot (${denom}) - ${a} \\cdot ${b}`;
-                    const ans = `f'(x) = \\frac{${-a*b}}{(${denom})^2}`;
-                    const steps = `$u=${a}, v=${denom}$. $u'=0, v'=${b}$. $$f'(x) = \\frac{u'v - uv'}{v^2} \\\\ = \\frac{${rawNum}}{(${denom})^2} \\\\ = \\frac{${-a*b}}{(${denom})^2}$$`;
-                    add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
-                }
-                else if (type === 'exp') {
-                    q = `f(x) = \\frac{e^{${a}x}}{x}`;
-                    const rawNum = `${a}e^{${a}x} \\cdot x - e^{${a}x} \\cdot 1`;
-                    const ans = `f'(x) = \\frac{e^{${a}x}(${a}x - 1)}{x^2}`;
-                    const steps = `$u=e^{${a}x}, v=x$. $u'=${a}e^{${a}x}, v'=1$. $$f'(x) = \\frac{${rawNum}}{x^2} \\\\ = \\frac{e^{${a}x}(${a}x - 1)}{x^2}$$`;
-                    add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
-                }
-                else if (type === 'log') {
-                    q = `f(x) = \\frac{\\ln x}{x^${n}}`;
-                    const rawNum = `(\\frac{1}{x}) \\cdot x^${n} - \\ln x \\cdot ${n}x${fmtPow(n-1)}`;
-                    const ans = `f'(x) = \\frac{1 - ${n}\\ln x}{x^${n+1}}`;
-                    const steps = `$u=\\ln x, v=x^${n}$. $u'=1/x, v'=${n}x${fmtPow(n-1)}$. $$f'(x) = \\frac{${rawNum}}{(x^${n})^2} \\\\ = \\frac{x${fmtPow(n-1)}(1 - ${n}\\ln x)}{x^${2*n}} \\\\ = \\frac{1 - ${n}\\ln x}{x^${n+1}}$$`;
-                    add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
-                }
-                 else {
-                     const denom = `x ${fmtNum(a)}`;
-                     q = `f(x) = \\frac{\\sqrt{x}}{${denom}}`;
-                     const rawNum = `\\frac{1}{2\\sqrt{x}}(${denom}) - \\sqrt{x}`;
-                     const combinedNum = `\\frac{(${denom}) - 2x}{2\\sqrt{x}}`;
-                     const simpNum = `${fmtNum(a, true)} - x`;
-                     const ans = `f'(x) = \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}`;
-                     const steps = `$$
-\\begin{aligned}
-u &= \\sqrt{x} & v &= ${denom} \\\\
-u' &= \\frac{1}{2\\sqrt{x}} & v' &= 1
-\\end{aligned}
-$$
-$$
-\\begin{aligned}
-f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
-&= \\frac{${rawNum}}{(${denom})^2} \\\\
-&= \\frac{${combinedNum}}{(${denom})^2} \\\\
-&= \\frac{${simpNum}}{2\\sqrt{x}(${denom})^2}
-\\end{aligned}
-$$`;
-                     add(rule, lvl, type, q, `$$ ${ans} $$`, steps, "Brøkregel.");
-                }
+                generateQuotientProblem(type, lvl, a, b, n, add);
             }
         }
 
