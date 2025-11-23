@@ -210,10 +210,10 @@
                             <div>
                                 <h4 class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3" data-key="filter_types">Matematisk Område</h4>
                                 <div class="flex gap-2 flex-wrap">
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="poly" onchange="toggleFilter('type', 'poly')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Polynomer</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="root" onchange="toggleFilter('type', 'root')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Røtter</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="exp" onchange="toggleFilter('type', 'exp')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Eksponential</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="log" onchange="toggleFilter('type', 'log')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Logaritmer</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="poly" onchange="toggleFilter('type', 'poly')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_poly">Polynomer</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="root" onchange="toggleFilter('type', 'root')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_root">Røtter</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="exp" onchange="toggleFilter('type', 'exp')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_exp">Eksponential</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="log" onchange="toggleFilter('type', 'log')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_log">Logaritmer</div></label>
                                 </div>
                             </div>
                         </div>
@@ -370,6 +370,10 @@
                 filter_rule: "Regel",
                 filter_levels: "Nivå",
                 filter_types: "Matematisk Område",
+                type_poly: "Polynomer",
+                type_root: "Røtter",
+                type_exp: "Eksponential",
+                type_log: "Logaritmer",
                 btn_draw_focus: "Trekk 5 oppgaver",
                 focus_end_text: "Vil du ha flere av samme type?",
                 btn_new_focus: "Trekk 5 nye (samme filtre)",
@@ -426,6 +430,10 @@
                 filter_rule: "Rule",
                 filter_levels: "Levels",
                 filter_types: "Math Area",
+                type_poly: "Polynomials",
+                type_root: "Roots",
+                type_exp: "Exponential",
+                type_log: "Logarithms",
                 btn_draw_focus: "Draw 5 Problems",
                 focus_end_text: "Want more of the same?",
                 btn_new_focus: "Draw 5 New (Same Filters)",
