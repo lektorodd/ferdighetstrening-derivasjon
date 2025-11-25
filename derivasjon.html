@@ -4072,6 +4072,7 @@ $$`;
             state.mode = 'mix';
             updateProblemSet();
             navigateTo('practice');
+            renderModeUI();
         }
 
         function setMode(mode) {
@@ -4226,9 +4227,20 @@ $$`;
             const preferredDifficulty = getPreferredDifficultyForTopic(problem.topic);
             const difficultyDiff = Math.abs(problem.level - preferredDifficulty);
 
-            // Reduce weight if difficulty is far from preferred level
-            if (difficultyDiff > 1) {
-                weight *= 0.5;
+            // For beginners (preferred difficulty 1), strongly favor easier levels
+            if (preferredDifficulty === 1) {
+                if (problem.level === 1) {
+                    weight *= 3; // Strongly prefer level 1 for beginners
+                } else if (problem.level === 2) {
+                    weight *= 1.5; // Some level 2 is okay
+                } else {
+                    weight *= 0.2; // Heavily penalize level 3+
+                }
+            } else {
+                // For experienced users, use normal difficulty matching
+                if (difficultyDiff > 1) {
+                    weight *= 0.5;
+                }
             }
 
             return weight;
