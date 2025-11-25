@@ -70,11 +70,14 @@
                 </div>
                 <h1 class="text-xl font-bold tracking-tight text-stone-900">Ferdighetstrening <span class="text-blue-600">Derivasjon</span></h1>
             </div>
-            <div class="flex space-x-2 bg-stone-100 p-1 rounded-lg">
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon/issues/new" target="_blank" class="px-3 py-1.5 text-sm font-medium text-stone-700 hover:text-blue-600 hover:bg-stone-100 rounded-md transition-all" data-key="btn_report_issue">Tips/Feil?</a>
+                <div class="flex space-x-2 bg-stone-100 p-1 rounded-lg">
                 <button onclick="setLanguage('no')" id="btn-no" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇳🇴</button>
                 <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇬🇧</button>
                 <button onclick="setLanguage('es')" id="btn-es" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇪🇸</button>
                 <button onclick="setLanguage('uk')" id="btn-uk" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇺🇦</button>
+                </div>
             </div>
         </div>
     </header>
@@ -111,7 +114,7 @@
                     <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 hover:text-stone-600 transition-colors" title="View on GitHub">
                         <i class="fa-brands fa-github text-sm"></i>
                     </a>
-                    <p class="font-mono text-xs text-stone-400 leading-tight">v0.9.0</p>
+                    <p class="font-mono text-xs text-stone-400 leading-tight">v1.0.0</p>
                 </div>
                 <p class="font-mono text-xs text-stone-500 leading-tight">Torodd F. Ottestad</p>
                 <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 hover:text-blue-800 hover:underline leading-tight">lektorodd</a>
@@ -317,14 +320,25 @@
 
     <!-- JS LOGIC -->
     <script>
+        // Safe localStorage helper to prevent JSON parsing errors
+        function safeGetLocalStorage(key, defaultValue) {
+            try {
+                const item = localStorage.getItem(key);
+                return item ? JSON.parse(item) : defaultValue;
+            } catch (e) {
+                console.warn(`Failed to parse localStorage key "${key}":`, e);
+                return defaultValue;
+            }
+        }
+
         const state = {
             currentView: 'dashboard',
             language: 'no',
             activeTopic: 'chain',
             mode: 'focus',
-            progress: JSON.parse(localStorage.getItem('mathTrainerProgress')) || {},
-            hints: JSON.parse(localStorage.getItem('mathTrainerHints')) || [],
-            recentlyShown: JSON.parse(localStorage.getItem('mathTrainerRecentlyShown')) || [],
+            progress: safeGetLocalStorage('mathTrainerProgress', {}),
+            hints: safeGetLocalStorage('mathTrainerHints', []),
+            recentlyShown: safeGetLocalStorage('mathTrainerRecentlyShown', []),
             activeProblems: [],
             filters: {
                 levels: [1, 2, 3, 4, 5],
@@ -391,7 +405,10 @@
                 help_stats_title: "Statistikk",
                 help_stats_desc: "Få oversikt over fremgangen din fordelt på emne og vanskelighetsgrad.",
                 btn_clear_progress: "Nullstill Fremgang",
-                clear_confirm: "Er du sikker på at du vil slette all fremgang? Dette kan ikke angres."
+                clear_confirm: "Er du sikker på at du vil slette all fremgang? Dette kan ikke angres.",
+                no_problems_found: "Ingen oppgaver funnet med disse filtrene.",
+                progress_cleared: "All fremgang er slettet",
+                btn_report_issue: "Tips/Feil?",
             },
             en: {
                 nav_dashboard: "Dashboard",
@@ -451,8 +468,10 @@
                 help_stats_title: "Statistics",
                 help_stats_desc: "Track your mastery across topics and difficulty levels.",
                 btn_clear_progress: "Clear Progress",
-                clear_confirm: "Are you sure you want to delete all progress? This cannot be undone."
-            },
+                clear_confirm: "Are you sure you want to delete all progress? This cannot be undone.",
+                no_problems_found: "No problems found with these filters.",
+                progress_cleared: "All progress has been cleared",
+                btn_report_issue: "Tips/Error?",
             es: {
                 nav_dashboard: "Tablero",
                 nav_theory: "Teoría",
@@ -511,9 +530,12 @@
                 help_stats_title: "Estadísticas",
                 help_stats_desc: "Rastrea tu dominio por tema y nivel.",
                 btn_clear_progress: "Borrar Progreso",
-                clear_confirm: "¿Estás seguro de que quieres eliminar todo el progreso? Esto no se puede deshacer."
+                clear_confirm: "¿Estás seguro de que quieres eliminar todo el progreso? Esto no se puede deshacer.",
+                no_problems_found: "No se encontraron problemas con estos filtros.",
+                progress_cleared: "Todo el progreso ha sido eliminado",
+                btn_report_issue: "¿Consejos/Error?",
             },
-            uk: {
+                btn_report_issue: "¿Consejos/Error?",
                 nav_dashboard: "Огляд",
                 nav_theory: "Банк Теорії",
                 nav_practice: "Арена Практики",
@@ -571,7 +593,10 @@
                 help_stats_title: "Статистика",
                 help_stats_desc: "Відстежуйте свою майстерність за темами та рівнями складності.",
                 btn_clear_progress: "Очистити Прогрес",
-                clear_confirm: "Ви впевнені, що хочете видалити весь прогрес? Це не можна скасувати."
+                clear_confirm: "Ви впевнені, що хочете видалити весь прогрес? Це не можна скасувати.",
+                no_problems_found: "Не знайдено завдань з цими фільтрами.",
+                progress_cleared: "Весь прогрес видалено",
+                btn_report_issue: "Поради/Помилка?",
             }
         };
 
@@ -2407,7 +2432,7 @@ $$`;
                     const denom = `x^2 ${fmtNum(c)}`;
                     const rawNum = `${a}(${denom}) - (${num}) \\cdot 2x`;
                     const expandedNum = `${a}x^2 ${fmtNum(a*c)} - 2x^2 ${fmtNum(2*b)}x`;
-                    const simplifiedNum = `${a-2}x^2 ${fmtNum(-2*b)}x ${fmtNum(a*c)}`;
+                    const simplifiedNum = `${-a}x^2 ${fmtNum(-2*b)}x ${fmtNum(a*c)}`;
                     const ans = `f'(x) = \\frac{${simplifiedNum}}{(${denom})^2}`;
                     const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
 &= \\frac{${rawNum}}{(${denom})^2}`;
@@ -2490,7 +2515,7 @@ $$`;
                     const rawNum = `\\frac{1}{2\\sqrt{x}} \\cdot x - \\sqrt{x} \\cdot 1`;
                     const combinedNum = `\\frac{x - 2x}{2\\sqrt{x}}`;
                     const simpNum = `-x`;
-                    const ans = `f'(x) = \\frac{-1}{2\\sqrt{x}}`;
+                    const ans = `f'(x) = \\frac{-1}{2x\\sqrt{x}}`;
                     const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
 &= \\frac{${rawNum}}{x^2} \\\\
 &= \\frac{${combinedNum}}{x^2} \\\\
@@ -3994,7 +4019,7 @@ $$`;
             );
             
             if (candidates.length === 0) {
-                alert("Ingen oppgaver funnet med disse filtrene.");
+                alert(i18n[state.language].no_problems_found);
                 return;
             }
 
@@ -4077,15 +4102,19 @@ $$`;
             const status = state.progress[problem.id];
             let weight = 1;
 
-            // Exclude already completed tasks (mastered or practice) from smart mix
-            // Users should only see new, unrated tasks
-            if (status === 'mastered' || status === 'practice') {
+            // Exclude mastered tasks from smart mix (they don't need practice)
+            if (status === 'mastered') {
                 return 0;
             }
 
-            // Reduce weight for recently shown tasks
+            // BOOST tasks marked as "needs practice" - this is the point of smart mix!
+            if (status === 'practice') {
+                weight *= 5;
+            }
+
+            // Reduce weight for recently shown tasks (but don't eliminate them if they need practice)
             if (state.recentlyShown.includes(problem.id)) {
-                weight *= 0.1;
+                weight *= 0.2;
             }
 
             // Boost weight for recommended tasks from struggling topics
@@ -4110,8 +4139,15 @@ $$`;
                 // Calculate weights for all problems
                 let weighted = problemBank.map(p => ({ ...p, weight: getProblemWeight(p) }));
 
-                // Sort by weight with randomization (weighted random shuffle)
-                weighted.sort((a, b) => (b.weight * Math.random()) - (a.weight * Math.random()));
+                // Filter out zero-weight problems
+                weighted = weighted.filter(p => p.weight > 0);
+
+                // Stable sort by weight (descending), then shuffle within weight groups
+                weighted.sort((a, b) => b.weight - a.weight);
+
+                // Add randomness by assigning random values within weight tiers
+                weighted = weighted.map(p => ({ ...p, randomValue: Math.random() * p.weight }));
+                weighted.sort((a, b) => b.randomValue - a.randomValue);
 
                 // Select top 5 problems
                 let selected = weighted.slice(0, 5);
@@ -4316,10 +4352,7 @@ $$`;
                 renderProblems();
 
                 // Show success message
-                alert('✓ ' + (state.language === 'no' ? 'All fremgang er slettet' :
-                              state.language === 'en' ? 'All progress has been cleared' :
-                              state.language === 'es' ? 'Todo el progreso ha sido eliminado' :
-                              'Весь прогрес видалено'));
+                alert('✓ ' + i18n[state.language].progress_cleared);
             }
         }
 
