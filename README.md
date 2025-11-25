@@ -36,7 +36,14 @@ Website: [lektorodd.no](https://lektorodd.no)
 
 ## Changelog
 
-### Version 1.0.0 (Current - Public Release)
+### Version 1.0.1 (Current)
+
+Hotfix release for smart mix task generation.
+
+#### Bug Fixes (v1.0.1)
+- **Critical**: Fixed duplicate tasks appearing in smart mix mode (prevented identical expressions like `x√x` or `e^(x+1)` from showing multiple times in the same 5-task session)
+
+### Version 1.0.0 (Public Release)
 
 Official launch with critical bug fixes and improvements.
 
@@ -98,7 +105,8 @@ Official launch with critical bug fixes and improvements.
 
 | Version | Status | Description |
 |---------|--------|-------------|
-| 1.0.0 | Current | Official public release with critical bug fixes |
+| 1.0.1 | Current | Hotfix for duplicate task bug in smart mix |
+| 1.0.0 | Stable | Official public release with critical bug fixes |
 | 0.9.0 | Archived | Pre-release with all core features implemented |
 
 ## License

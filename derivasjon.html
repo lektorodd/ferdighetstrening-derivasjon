@@ -114,7 +114,7 @@
                     <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 hover:text-stone-600 transition-colors" title="View on GitHub">
                         <i class="fa-brands fa-github text-sm"></i>
                     </a>
-                    <p class="font-mono text-xs text-stone-400 leading-tight">v1.0.0</p>
+                    <p class="font-mono text-xs text-stone-400 leading-tight">v1.0.1</p>
                 </div>
                 <p class="font-mono text-xs text-stone-500 leading-tight">Torodd F. Ottestad</p>
                 <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 hover:text-blue-800 hover:underline leading-tight">lektorodd</a>
@@ -4261,8 +4261,20 @@ $$`;
                 weighted = weighted.map(p => ({ ...p, randomValue: Math.random() * p.weight }));
                 weighted.sort((a, b) => b.randomValue - a.randomValue);
 
-                // Select top 5 problems
-                let selected = weighted.slice(0, 5);
+                // Select top 5 problems, ensuring no duplicates by question text
+                let selected = [];
+                let seenQuestions = new Set();
+                let index = 0;
+
+                while (selected.length < 5 && index < weighted.length) {
+                    const problem = weighted[index];
+                    // Only add if we haven't seen this exact question before
+                    if (!seenQuestions.has(problem.q)) {
+                        selected.push(problem);
+                        seenQuestions.add(problem.q);
+                    }
+                    index++;
+                }
 
                 // Sort selected by difficulty level (ascending)
                 selected.sort((a, b) => a.level - b.level);
