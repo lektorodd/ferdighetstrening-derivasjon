@@ -2282,8 +2282,8 @@ $$`;
                     // x^2/(x + a) - quadratic over linear
                     const denom = `x ${fmtNum(a)}`;
                     const rawNum = `2x(${denom}) - x^2 \\cdot 1`;
-                    const expandedNum = `2x^2 ${fmtNum(2*a, true)}x - x^2`;
-                    const simplifiedNum = `x^2 ${fmtNum(2*a, true)}x`;
+                    const expandedNum = `2x^2 ${fmtNum(2*a, false)}x - x^2`;
+                    const simplifiedNum = `x^2 ${fmtNum(2*a, false)}x`;
                     const factoredNum = `x(x ${fmtNum(2*a)})`;
                     const ans = `f'(x) = \\frac{${factoredNum}}{(${denom})^2}`;
                     const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
@@ -2362,8 +2362,8 @@ $$`;
                     // x^3/(x^2 + a) - cubic over quadratic
                     const denom = `x^2 ${fmtNum(a)}`;
                     const rawNum = `3x^2(${denom}) - x^3 \\cdot 2x`;
-                    const expandedNum = `3x^4 ${fmtNum(3*a, true)}x^2 - 2x^4`;
-                    const simplifiedNum = `x^4 ${fmtNum(3*a, true)}x^2`;
+                    const expandedNum = `3x^4 ${fmtNum(3*a, false)}x^2 - 2x^4`;
+                    const simplifiedNum = `x^4 ${fmtNum(3*a, false)}x^2`;
                     const factoredNum = `x^2(x^2 ${fmtNum(3*a)})`;
                     const ans = `f'(x) = \\frac{${factoredNum}}{(${denom})^2}`;
                     const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
