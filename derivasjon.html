@@ -171,14 +171,21 @@
             <!-- VIEW: THEORY -->
             <div id="view-theory" class="view-section hidden fade-in">
                 <div class="max-w-3xl mx-auto">
-                    <div class="flex items-center justify-between mb-6">
-                        <h2 class="text-2xl font-bold text-stone-900" data-key="nav_theory">Teoribank</h2>
-                        <select id="theory-topic-select" onchange="renderTheory()" class="bg-white border border-stone-300 text-stone-700 text-sm rounded-lg block p-2">
-                            <option value="chain" data-key="topic_chain">Kjerneregelen</option>
-                            <option value="product" data-key="topic_product">Produktregelen</option>
-                            <option value="quotient" data-key="topic_quotient">Brøkregelen</option>
-                        </select>
+                    <h2 class="text-2xl font-bold text-stone-900 mb-6" data-key="nav_theory">Teoribank</h2>
+
+                    <!-- Theory Topic Tabs -->
+                    <div class="flex gap-2 mb-6 bg-white p-1 rounded-xl border border-stone-200 shadow-sm">
+                        <button onclick="setTheoryTopic('chain')" id="theory-tab-chain" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_chain">Kjerneregelen</span>
+                        </button>
+                        <button onclick="setTheoryTopic('product')" id="theory-tab-product" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_product">Produktregelen</span>
+                        </button>
+                        <button onclick="setTheoryTopic('quotient')" id="theory-tab-quotient" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_quotient">Brøkregelen</span>
+                        </button>
                     </div>
+
                     <div id="theory-content" class="bg-white rounded-xl border border-stone-200 shadow-sm p-8"></div>
                 </div>
             </div>
@@ -4030,10 +4037,9 @@ $$`;
 
             // View Specific Logic
             if (viewId === 'theory') {
-                const sel = document.getElementById('theory-topic-select');
-                if(sel) {
-                    // Sync dropdown with state, or default to chain if empty
-                    sel.value = state.activeTopic || 'chain'; 
+                // Ensure we have a valid theory topic selected
+                if (!state.activeTopic) {
+                    state.activeTopic = 'chain';
                 }
                 renderTheory();
             }
@@ -4279,13 +4285,29 @@ $$`;
             }
         }
 
-        function renderTheory() {
-            const sel = document.getElementById('theory-topic-select');
-            // Fallback to state topic if select is not yet available or has no value
-            let topic = state.activeTopic;
-            if (sel && sel.value) {
-                topic = sel.value;
+        function setTheoryTopic(topic) {
+            state.activeTopic = topic;
+            renderTheory();
+            updateTheoryTabs();
+        }
+
+        function updateTheoryTabs() {
+            // Update active tab styling
+            document.querySelectorAll('.theory-tab').forEach(tab => {
+                tab.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
+                tab.classList.add('text-stone-600', 'hover:bg-stone-50');
+            });
+
+            const activeTab = document.getElementById(`theory-tab-${state.activeTopic}`);
+            if (activeTab) {
+                activeTab.classList.remove('text-stone-600', 'hover:bg-stone-50');
+                activeTab.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
             }
+        }
+
+        function renderTheory() {
+            // Use state.activeTopic as the source of truth
+            let topic = state.activeTopic || 'chain';
 
             // Ensure we have a valid topic context
             if (!theoryData[topic]) topic = 'chain';
@@ -4308,6 +4330,8 @@ $$`;
 
                 ${content.detailedExample || ''}
             `;
+
+            updateTheoryTabs();
             if(window.MathJax) MathJax.typeset();
         }
 

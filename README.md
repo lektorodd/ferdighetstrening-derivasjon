@@ -49,6 +49,11 @@ Official launch with critical bug fixes and improvements.
 - Internationalized all alert messages for better multi-language support
 - Added "Tips/Feil?" issue reporting button to navbar for user feedback
 
+#### UX Improvements (v1.0.0)
+- **Theory Navigation**: Replaced dropdown with smooth tab-based navigation between derivative rules
+- **Language Persistence**: Theory topic selection now persists when switching languages
+- **Enhanced Theory Bank**: Added comprehensive "Common Mistakes" and "Alternative Methods" sections to all languages
+
 #### Recent Updates
 
 **Task Variety & Difficulty**
