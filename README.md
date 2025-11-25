@@ -23,7 +23,9 @@ An interactive web application for practicing derivative rules in mathematics. B
 
 ## Usage
 
-Simply open `derivasjon.html` in a modern web browser. No installation or build process required.
+**Try it live:** [https://lektorodd.no/ki/derivasjon.html](https://lektorodd.no/ki/derivasjon.html)
+
+Or download and open `derivasjon.html` in a modern web browser. No installation or build process required.
 
 ## Author
 
@@ -34,7 +36,23 @@ Website: [lektorodd.no](https://lektorodd.no)
 
 ## Changelog
 
-### Version 0.9.0 (Current - Pre-release)
+### Version 1.0.0 (Current - Public Release)
+
+Official launch with critical bug fixes and improvements.
+
+#### Bug Fixes (v1.0.0)
+- **Critical**: Fixed incorrect coefficient in quotient rule level 4 (linear over quadratic)
+- **Critical**: Fixed mathematical error in sqrt(x)/x derivative calculation
+- **Critical**: Fixed smart mix algorithm to properly boost "needs practice" tasks instead of excluding them
+- **Critical**: Fixed unstable sort algorithm in problem selection
+- Added error handling for localStorage to prevent crashes from corrupted data
+- Internationalized all alert messages for better multi-language support
+- Added "Tips/Feil?" issue reporting button to navbar for user feedback
+
+#### UX Improvements (v1.0.0)
+- **Theory Navigation**: Replaced dropdown with smooth tab-based navigation between derivative rules
+- **Language Persistence**: Theory topic selection now persists when switching languages
+- **Enhanced Theory Bank**: Added comprehensive "Common Mistakes" and "Alternative Methods" sections to all languages
 
 #### Recent Updates
 
@@ -74,22 +92,14 @@ Website: [lektorodd.no](https://lektorodd.no)
 - Focus mode for targeted practice
 - Mix mode with adaptive difficulty
 
-### Version 1.0.0 (Planned - Public Release)
-
-**Planned for v1.0.0:**
-- Final testing and quality assurance
-- Performance optimizations
-- User feedback integration
-- Official public release
-
 ---
 
 ## Version History
 
 | Version | Status | Description |
 |---------|--------|-------------|
-| 0.9.0 | Current | Pre-release with all core features implemented |
-| 1.0.0 | Planned | Official public release |
+| 1.0.0 | Current | Official public release with critical bug fixes |
+| 0.9.0 | Archived | Pre-release with all core features implemented |
 
 ## License
 
