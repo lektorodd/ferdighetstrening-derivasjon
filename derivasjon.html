@@ -4,9 +4,17 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Ferdighetstrening Derivasjon</title>
-    
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
     
     <!-- Google Fonts: JetBrains Mono & Inter -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -37,13 +45,19 @@
         .fade-in { animation: fadeIn 0.3s ease-in-out; }
         @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
         .chart-wrapper { position: relative; height: 250px; width: 100%; }
-        
+
         .filter-checkbox:checked + div {
-            background-color: #dbeafe; 
-            border-color: #2563eb; 
-            color: #1e40af; 
+            background-color: #dbeafe;
+            border-color: #2563eb;
+            color: #1e40af;
         }
-        
+
+        .dark .filter-checkbox:checked + div {
+            background-color: #1e3a8a;
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
         /* Custom select - FIX: appearance: none removes default arrow */
         select {
             appearance: none;
@@ -57,22 +71,30 @@
             -webkit-print-color-adjust: exact;
             print-color-adjust: exact;
         }
+
+        .dark select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        }
     </style>
 </head>
-<body class="bg-stone-50 text-stone-800 h-screen flex flex-col overflow-hidden">
+<body class="bg-stone-50 dark:bg-slate-900 text-stone-800 dark:text-slate-100 h-screen flex flex-col overflow-hidden">
 
     <!-- TOP NAVIGATION -->
-    <header class="bg-white border-b border-stone-200 shadow-sm z-20 flex-none">
+    <header class="bg-white dark:bg-slate-800 border-b border-stone-200 dark:border-slate-700 shadow-sm z-20 flex-none">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
             <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('dashboard')">
-                <div class="bg-blue-600 text-white p-2 rounded-lg">
+                <div class="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg">
                     <i class="fa-solid fa-graduation-cap"></i>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight text-stone-900">Ferdighetstrening <span class="text-blue-600">Derivasjon</span></h1>
+                <h1 class="text-xl font-bold tracking-tight text-stone-900 dark:text-slate-100">Ferdighetstrening <span class="text-blue-600 dark:text-blue-400">Derivasjon</span></h1>
             </div>
             <div class="flex items-center gap-3">
-                <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon/issues/new" target="_blank" class="px-3 py-1.5 text-sm font-medium text-stone-700 hover:text-blue-600 hover:bg-stone-100 rounded-md transition-all" data-key="btn_report_issue">Tips/Feil?</a>
-                <div class="flex space-x-2 bg-stone-100 p-1 rounded-lg">
+                <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon/issues/new" target="_blank" class="px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" data-key="btn_report_issue">Tips/Feil?</a>
+                <button onclick="toggleTheme()" id="theme-toggle" class="p-2 text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" title="Toggle theme">
+                    <i class="fa-solid fa-sun dark-hidden"></i>
+                    <i class="fa-solid fa-moon light-hidden" style="display: none;"></i>
+                </button>
+                <div class="flex space-x-2 bg-stone-100 dark:bg-slate-700 p-1 rounded-lg">
                 <button onclick="setLanguage('no')" id="btn-no" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇳🇴</button>
                 <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇬🇧</button>
                 <button onclick="setLanguage('es')" id="btn-es" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇪🇸</button>
@@ -84,7 +106,7 @@
 
     <div class="flex flex-1 overflow-hidden">
         <!-- SIDEBAR NAVIGATION -->
-        <nav class="hidden md:flex flex-col w-64 bg-white border-r border-stone-200 pt-6">
+        <nav class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-800 border-r border-stone-200 dark:border-slate-700 pt-6">
             <div class="flex-1 px-4 space-y-2">
                 <button onclick="navigateTo('dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-dashboard">
                     <i class="fa-solid fa-house w-5 text-center"></i>
@@ -109,26 +131,26 @@
             </div>
 
             <!-- FOOTER -->
-            <div class="p-4 mt-auto border-t border-stone-100">
+            <div class="p-4 mt-auto border-t border-stone-100 dark:border-slate-700">
                 <div class="flex items-center gap-2 mb-2">
-                    <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 hover:text-stone-600 transition-colors" title="View on GitHub">
+                    <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 dark:text-slate-500 hover:text-stone-600 dark:hover:text-slate-300 transition-colors" title="View on GitHub">
                         <i class="fa-brands fa-github text-sm"></i>
                     </a>
-                    <p class="font-mono text-xs text-stone-400 leading-tight">v1.0.1</p>
+                    <p class="font-mono text-xs text-stone-400 dark:text-slate-500 leading-tight">v1.0.1</p>
                 </div>
-                <p class="font-mono text-xs text-stone-500 leading-tight">Torodd F. Ottestad</p>
-                <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 hover:text-blue-800 hover:underline leading-tight">lektorodd</a>
+                <p class="font-mono text-xs text-stone-500 dark:text-slate-400 leading-tight">Torodd F. Ottestad</p>
+                <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline leading-tight">lektorodd</a>
             </div>
         </nav>
 
         <!-- MAIN CONTENT AREA -->
-        <main class="flex-1 overflow-y-auto bg-stone-50 p-4 sm:p-8 relative" id="main-container">
-            
+        <main class="flex-1 overflow-y-auto bg-stone-50 dark:bg-slate-900 p-4 sm:p-8 relative" id="main-container">
+
             <!-- VIEW: DASHBOARD -->
             <div id="view-dashboard" class="view-section fade-in">
                 <div class="max-w-5xl mx-auto">
-                    <h2 class="text-2xl font-bold text-stone-900 mb-2" data-key="dash_welcome">Velkommen!</h2>
-                    <p class="text-stone-500 mb-8" data-key="dash_subtitle">Hva vil du trene på i dag?</p>
+                    <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100 mb-2" data-key="dash_welcome">Velkommen!</h2>
+                    <p class="text-stone-500 dark:text-slate-400 mb-8" data-key="dash_subtitle">Hva vil du trene på i dag?</p>
 
                     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
                         <!-- Card: Smart Mix -->
@@ -149,17 +171,17 @@
                         </div>
 
                         <!-- Card: Focus Mode -->
-                        <div onclick="startFocusMode()" class="bg-white rounded-2xl p-8 text-stone-800 shadow-lg border border-stone-200 cursor-pointer hover:shadow-xl hover:border-blue-300 hover:scale-[1.02] transition-all group relative overflow-hidden">
-                            <div class="absolute top-0 right-0 p-8 opacity-5 transform translate-x-4 -translate-y-4">
-                                <i class="fa-solid fa-crosshairs text-9xl text-blue-900"></i>
+                        <div onclick="startFocusMode()" class="bg-white dark:bg-slate-800 rounded-2xl p-8 text-stone-800 dark:text-slate-100 shadow-lg border border-stone-200 dark:border-slate-700 cursor-pointer hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-500 hover:scale-[1.02] transition-all group relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 transform translate-x-4 -translate-y-4">
+                                <i class="fa-solid fa-crosshairs text-9xl text-blue-900 dark:text-blue-400"></i>
                             </div>
                             <div class="relative z-10 h-full flex flex-col">
-                                <div class="bg-blue-50 w-12 h-12 rounded-lg flex items-center justify-center mb-6 text-blue-600 group-hover:bg-blue-100 transition-colors">
+                                <div class="bg-blue-50 dark:bg-blue-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-6 text-blue-600 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
                                     <i class="fa-solid fa-list-check text-2xl"></i>
                                 </div>
                                 <h3 class="text-2xl font-bold mb-2" data-key="dash_focus_header">Fokustrening</h3>
-                                <p class="text-stone-500 mb-8 flex-grow" data-key="dash_focus_desc">Velg selv regel, nivå og type. Perfekt for mengdetrening.</p>
-                                <div class="flex items-center font-bold text-blue-600 self-start px-4 py-2 rounded-lg bg-blue-50 group-hover:bg-blue-100 transition-colors">
+                                <p class="text-stone-500 dark:text-slate-400 mb-8 flex-grow" data-key="dash_focus_desc">Velg selv regel, nivå og type. Perfekt for mengdetrening.</p>
+                                <div class="flex items-center font-bold text-blue-600 dark:text-blue-400 self-start px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
                                     <span data-key="btn_start_focus">Gå til Fokus</span> <i class="fa-solid fa-arrow-right ml-2"></i>
                                 </div>
                             </div>
@@ -171,10 +193,10 @@
             <!-- VIEW: THEORY -->
             <div id="view-theory" class="view-section hidden fade-in">
                 <div class="max-w-3xl mx-auto">
-                    <h2 class="text-2xl font-bold text-stone-900 mb-6" data-key="nav_theory">Teoribank</h2>
+                    <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100 mb-6" data-key="nav_theory">Teoribank</h2>
 
                     <!-- Theory Topic Tabs -->
-                    <div class="flex gap-2 mb-6 bg-white p-1 rounded-xl border border-stone-200 shadow-sm">
+                    <div class="flex gap-2 mb-6 bg-white dark:bg-slate-800 p-1 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm">
                         <button onclick="setTheoryTopic('chain')" id="theory-tab-chain" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
                             <span data-key="topic_chain">Kjerneregelen</span>
                         </button>
@@ -186,7 +208,7 @@
                         </button>
                     </div>
 
-                    <div id="theory-content" class="bg-white rounded-xl border border-stone-200 shadow-sm p-8"></div>
+                    <div id="theory-content" class="bg-white dark:bg-slate-800 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm p-8"></div>
                 </div>
             </div>
 
@@ -194,18 +216,18 @@
             <div id="view-practice" class="view-section hidden fade-in">
                 <div class="max-w-3xl mx-auto">
                     <div class="flex justify-between items-end mb-4">
-                        <h2 class="text-2xl font-bold text-stone-900" id="practice-title">Treningsarena</h2>
-                        <div class="flex bg-white border border-stone-200 rounded-lg p-1 shadow-sm">
+                        <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100" id="practice-title">Treningsarena</h2>
+                        <div class="flex bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 rounded-lg p-1 shadow-sm">
                             <button onclick="setMode('focus')" id="mode-focus-btn" class="px-3 py-1 text-xs font-bold rounded transition-all">Fokus</button>
                             <button onclick="setMode('mix')" id="mode-mix-btn" class="px-3 py-1 text-xs font-bold rounded transition-all">Smart Miks</button>
                         </div>
                     </div>
 
                     <!-- FOCUS FILTER PANEL -->
-                    <div id="focus-filter-panel" class="hidden bg-white p-6 rounded-xl border border-stone-200 shadow-sm mb-8 fade-in">
+                    <div id="focus-filter-panel" class="hidden bg-white dark:bg-slate-800 p-6 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm mb-8 fade-in">
                         <div class="mb-6">
-                            <label class="block text-xs font-bold text-stone-400 uppercase tracking-wider mb-2" data-key="filter_rule">Regel</label>
-                            <select id="focus-rule-select" onchange="changeFocusRule(this.value)" class="w-full p-2.5 bg-white border border-stone-300 text-stone-900 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block shadow-sm">
+                            <label class="block text-xs font-bold text-stone-400 dark:text-slate-500 uppercase tracking-wider mb-2" data-key="filter_rule">Regel</label>
+                            <select id="focus-rule-select" onchange="changeFocusRule(this.value)" class="w-full p-2.5 bg-white dark:bg-slate-700 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-slate-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block shadow-sm">
                                 <option value="chain" data-key="topic_chain">Kjerneregelen</option>
                                 <option value="product" data-key="topic_product">Produktregelen</option>
                                 <option value="quotient" data-key="topic_quotient">Brøkregelen</option>
@@ -214,31 +236,31 @@
 
                         <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                             <div>
-                                <h4 class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3" data-key="filter_levels">Vanskelighetsgrad</h4>
+                                <h4 class="text-xs font-bold text-stone-400 dark:text-slate-500 uppercase tracking-wider mb-3" data-key="filter_levels">Vanskelighetsgrad</h4>
                                 <div class="flex gap-2 flex-wrap">
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="1" onchange="toggleFilter('level', 1)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Nivå 1</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="2" onchange="toggleFilter('level', 2)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Nivå 2</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="3" onchange="toggleFilter('level', 3)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Nivå 3</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="4" onchange="toggleFilter('level', 4)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Nivå 4</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="5" onchange="toggleFilter('level', 5)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors">Nivå 5</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="1" onchange="toggleFilter('level', 1)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 1</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="2" onchange="toggleFilter('level', 2)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 2</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="3" onchange="toggleFilter('level', 3)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 3</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="4" onchange="toggleFilter('level', 4)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 4</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="5" onchange="toggleFilter('level', 5)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 5</div></label>
                                 </div>
                             </div>
                             <div>
-                                <h4 class="text-xs font-bold text-stone-400 uppercase tracking-wider mb-3" data-key="filter_types">Matematisk Område</h4>
+                                <h4 class="text-xs font-bold text-stone-400 dark:text-slate-500 uppercase tracking-wider mb-3" data-key="filter_types">Matematisk Område</h4>
                                 <div class="flex gap-2 flex-wrap">
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="poly" onchange="toggleFilter('type', 'poly')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_poly">Polynomer</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="root" onchange="toggleFilter('type', 'root')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_root">Røtter</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="exp" onchange="toggleFilter('type', 'exp')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_exp">Eksponential</div></label>
-                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="log" onchange="toggleFilter('type', 'log')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 text-sm font-medium text-stone-600 hover:bg-stone-50 transition-colors" data-key="type_log">Logaritmer</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="poly" onchange="toggleFilter('type', 'poly')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_poly">Polynomer</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="root" onchange="toggleFilter('type', 'root')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_root">Røtter</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="exp" onchange="toggleFilter('type', 'exp')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_exp">Eksponential</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="log" onchange="toggleFilter('type', 'log')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_log">Logaritmer</div></label>
                                 </div>
                             </div>
                         </div>
-                        
-                        <div class="flex justify-between items-center border-t border-stone-100 pt-4">
-                            <div class="text-xs text-stone-400">
+
+                        <div class="flex justify-between items-center border-t border-stone-100 dark:border-slate-700 pt-4">
+                            <div class="text-xs text-stone-400 dark:text-slate-500">
                                 <span id="filter-count">0</span> oppgaver tilgjengelig
                             </div>
-                            <button onclick="applyFiltersAndDraw()" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors">
+                            <button onclick="applyFiltersAndDraw()" class="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors">
                                 <i class="fa-solid fa-rotate mr-2"></i> <span data-key="btn_draw_focus">Trekk 5 oppgaver</span>
                             </button>
                         </div>
@@ -343,6 +365,7 @@
             language: 'no',
             activeTopic: 'chain',
             mode: 'focus',
+            theme: localStorage.getItem('mathTrainerTheme') || 'light',
             progress: safeGetLocalStorage('mathTrainerProgress', {}),
             hints: safeGetLocalStorage('mathTrainerHints', []),
             recentlyShown: safeGetLocalStorage('mathTrainerRecentlyShown', []),
@@ -352,6 +375,36 @@
                 types: ['poly', 'root', 'exp', 'log']
             }
         };
+
+        // Theme management
+        function initTheme() {
+            const savedTheme = localStorage.getItem('mathTrainerTheme') || 'light';
+            state.theme = savedTheme;
+            applyTheme(savedTheme);
+        }
+
+        function toggleTheme() {
+            const newTheme = state.theme === 'light' ? 'dark' : 'light';
+            state.theme = newTheme;
+            localStorage.setItem('mathTrainerTheme', newTheme);
+            applyTheme(newTheme);
+        }
+
+        function applyTheme(theme) {
+            const html = document.documentElement;
+            const lightIcons = document.querySelectorAll('.dark-hidden');
+            const darkIcons = document.querySelectorAll('.light-hidden');
+
+            if (theme === 'dark') {
+                html.classList.add('dark');
+                lightIcons.forEach(icon => icon.style.display = 'none');
+                darkIcons.forEach(icon => icon.style.display = 'inline');
+            } else {
+                html.classList.remove('dark');
+                lightIcons.forEach(icon => icon.style.display = 'inline');
+                darkIcons.forEach(icon => icon.style.display = 'none');
+            }
+        }
 
         const i18n = {
             no: {
@@ -4008,7 +4061,10 @@ $$`;
         function init() {
             const savedLang = localStorage.getItem('mathTrainerLang');
             if (savedLang) state.language = savedLang;
-            
+
+            // Initialize theme
+            initTheme();
+
             // GENERATE PROBLEMS
             problemBank = generateProblemBank();
 
@@ -4028,11 +4084,11 @@ $$`;
             // Update Nav State
             document.querySelectorAll('.nav-item').forEach(el => {
                 if(el.id === `nav-${viewId}`) {
-                    el.classList.add('bg-blue-50', 'text-blue-700');
-                    el.classList.remove('text-stone-600');
+                    el.classList.add('bg-blue-50', 'dark:bg-blue-900/30', 'text-blue-700', 'dark:text-blue-400');
+                    el.classList.remove('text-stone-600', 'dark:text-slate-400', 'hover:bg-stone-100', 'dark:hover:bg-slate-700');
                 } else {
-                    el.classList.remove('bg-blue-50', 'text-blue-700');
-                    el.classList.add('text-stone-600');
+                    el.classList.remove('bg-blue-50', 'dark:bg-blue-900/30', 'text-blue-700', 'dark:text-blue-400');
+                    el.classList.add('text-stone-600', 'dark:text-slate-400', 'hover:bg-stone-100', 'dark:hover:bg-slate-700');
                 }
             });
 
@@ -4295,16 +4351,16 @@ $$`;
             const focusPanel = document.getElementById('focus-filter-panel');
             const titleEl = document.getElementById('practice-title');
             const ruleSel = document.getElementById('focus-rule-select');
-            
+
             if(state.mode === 'focus') {
-                focusBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all bg-blue-600 text-white shadow-sm";
-                mixBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all text-stone-500 hover:bg-stone-100";
+                focusBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all bg-blue-600 dark:bg-blue-500 text-white shadow-sm";
+                mixBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all text-stone-500 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-700";
                 focusPanel.classList.remove('hidden');
                 if(ruleSel) ruleSel.value = state.activeTopic;
                 titleEl.textContent = i18n[state.language].dash_focus_header;
             } else {
-                mixBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all bg-purple-600 text-white shadow-sm";
-                focusBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all text-stone-500 hover:bg-stone-100";
+                mixBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all bg-purple-600 dark:bg-purple-500 text-white shadow-sm";
+                focusBtn.className = "px-3 py-1 text-xs font-bold rounded transition-all text-stone-500 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-700";
                 focusPanel.classList.add('hidden');
                 titleEl.textContent = i18n[state.language].mode_mix_title;
             }
@@ -4319,14 +4375,14 @@ $$`;
         function updateTheoryTabs() {
             // Update active tab styling
             document.querySelectorAll('.theory-tab').forEach(tab => {
-                tab.classList.remove('bg-blue-600', 'text-white', 'shadow-sm');
-                tab.classList.add('text-stone-600', 'hover:bg-stone-50');
+                tab.classList.remove('bg-blue-600', 'dark:bg-blue-500', 'text-white', 'shadow-sm');
+                tab.classList.add('text-stone-600', 'dark:text-slate-300', 'hover:bg-stone-50', 'dark:hover:bg-slate-700');
             });
 
             const activeTab = document.getElementById(`theory-tab-${state.activeTopic}`);
             if (activeTab) {
-                activeTab.classList.remove('text-stone-600', 'hover:bg-stone-50');
-                activeTab.classList.add('bg-blue-600', 'text-white', 'shadow-sm');
+                activeTab.classList.remove('text-stone-600', 'dark:text-slate-300', 'hover:bg-stone-50', 'dark:hover:bg-slate-700');
+                activeTab.classList.add('bg-blue-600', 'dark:bg-blue-500', 'text-white', 'shadow-sm');
             }
         }
 
@@ -4531,9 +4587,9 @@ $$`;
 
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 if(btn.id === `btn-${state.language}`) {
-                    btn.className = "lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all bg-white shadow-sm ring-1 ring-black/10";
+                    btn.className = "lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all bg-white dark:bg-slate-600 shadow-sm ring-1 ring-black/10 dark:ring-white/10";
                 } else {
-                    btn.className = "lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all text-stone-400 hover:bg-stone-200";
+                    btn.className = "lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all text-stone-400 dark:text-slate-400 hover:bg-stone-200 dark:hover:bg-slate-600";
                 }
             });
         }
