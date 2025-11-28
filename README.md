@@ -65,7 +65,15 @@ Website: [lektorodd.no](https://lektorodd.no)
 
 ## Changelog
 
-### Version 1.2.0 (Current)
+### Version 1.2.1 (Current)
+
+Small improvements and UI polish.
+
+#### Changes (v1.2.1)
+- **Real-time Badge Updates**: "Trenger Øving" badge now updates immediately when marking problems
+- **Emoji Language Flags**: Language buttons now show country flags (🇳🇴 🇬🇧 🇪🇸 🇺🇦) instead of text codes
+
+### Version 1.2.0
 
 Major refactoring release - modular ES6 architecture.
 
@@ -173,7 +181,8 @@ Official launch with critical bug fixes and improvements.
 
 | Version | Status | Description |
 |---------|--------|-------------|
-| 1.2.0 | Current | Modular ES6 architecture refactoring |
+| 1.2.1 | Current | Real-time badge updates, emoji language flags |
+| 1.2.0 | Stable | Modular ES6 architecture refactoring |
 | 1.1.0 | Stable | Feature release with basic rules theory, nested chain rule, progressive difficulty |
 | 1.0.2 | Stable | Dark mode and favicon implementation |
 | 1.0.1 | Stable | Hotfix for duplicate task bug in smart mix |
