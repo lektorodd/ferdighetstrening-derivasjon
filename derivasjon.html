@@ -120,6 +120,11 @@
                     <i class="fa-solid fa-dumbbell w-5 text-center"></i>
                     <span data-key="nav_practice">Treningsarena</span>
                 </button>
+                <button onclick="navigateTo('marked')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-marked">
+                    <i class="fa-solid fa-bookmark w-5 text-center"></i>
+                    <span data-key="nav_marked">Trenger Øving</span>
+                    <span id="marked-count-badge" class="ml-auto bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 text-xs px-2 py-0.5 rounded-full hidden">0</span>
+                </button>
                 <button onclick="navigateTo('stats')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-stats">
                     <i class="fa-solid fa-chart-simple w-5 text-center"></i>
                     <span data-key="nav_stats">Min Statistikk</span>
@@ -136,7 +141,7 @@
                     <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 dark:text-slate-500 hover:text-stone-600 dark:hover:text-slate-300 transition-colors" title="View on GitHub">
                         <i class="fa-brands fa-github text-sm"></i>
                     </a>
-                    <p class="font-mono text-xs text-stone-400 dark:text-slate-500 leading-tight">v1.0.2</p>
+                    <p class="font-mono text-xs text-stone-400 dark:text-slate-500 leading-tight">v1.1.0</p>
                 </div>
                 <p class="font-mono text-xs text-stone-500 dark:text-slate-400 leading-tight">Torodd F. Ottestad</p>
                 <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline leading-tight">lektorodd</a>
@@ -197,6 +202,9 @@
 
                     <!-- Theory Topic Tabs -->
                     <div class="flex gap-2 mb-6 bg-white dark:bg-slate-800 p-1 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm">
+                        <button onclick="setTheoryTopic('basic')" id="theory-tab-basic" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_basic">Grunnleggende</span>
+                        </button>
                         <button onclick="setTheoryTopic('chain')" id="theory-tab-chain" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
                             <span data-key="topic_chain">Kjerneregelen</span>
                         </button>
@@ -320,6 +328,23 @@
                 </div>
             </div>
 
+            <!-- VIEW: MARKED PROBLEMS -->
+            <div id="view-marked" class="view-section hidden fade-in">
+                <div class="max-w-3xl mx-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100" data-key="marked_title">Oppgaver som trenger øving</h2>
+                            <p class="text-stone-500 dark:text-slate-400 text-sm" data-key="marked_subtitle">Ta gjerne med denne listen til læreren</p>
+                        </div>
+                        <button onclick="printMarkedProblems()" class="text-stone-500 hover:text-stone-700 dark:text-slate-400 dark:hover:text-slate-200">
+                            <i class="fa-solid fa-print mr-1"></i> <span data-key="btn_print">Skriv ut</span>
+                        </button>
+                    </div>
+
+                    <div id="marked-problems-container" class="space-y-6"></div>
+                </div>
+            </div>
+
             <!-- VIEW: HELP -->
             <div id="view-help" class="view-section hidden fade-in">
                 <div class="max-w-3xl mx-auto bg-white rounded-xl border border-stone-200 shadow-sm p-8">
@@ -373,7 +398,13 @@
             filters: {
                 levels: [1, 2, 3, 4, 5],
                 types: ['poly', 'root', 'exp', 'log']
-            }
+            },
+            topicCeilings: safeGetLocalStorage('mathTrainerCeilings', {
+                chain: 1,
+                product: 1,
+                quotient: 1
+            }),
+            levelProgress: safeGetLocalStorage('mathTrainerLevelProgress', {})
         };
 
         // Theme management
@@ -411,14 +442,21 @@
                 nav_dashboard: "Oversikt",
                 nav_theory: "Teoribank",
                 nav_practice: "Treningsarena",
+                nav_marked: "Trenger Øving",
                 nav_stats: "Min Statistikk",
                 nav_help: "Hjelp",
+                marked_title: "Oppgaver som trenger øving",
+                marked_subtitle: "Ta gjerne med denne listen til læreren",
+                marked_empty_title: "Ingen markerte oppgaver!",
+                marked_empty_desc: "Når du markerer en oppgave som \"Trenger øving\" i treningsarenaen, vil den dukke opp her.",
+                btn_print: "Skriv ut",
                 dash_welcome: "Velkommen!",
                 dash_subtitle: "Hva vil du trene på i dag?",
                 dash_focus_header: "Fokustrening",
                 dash_focus_desc: "Velg selv regel, nivå og type. Perfekt for mengdetrening.",
                 mode_mix_title: "Smart Miks",
                 mode_mix_desc: "Algoritmen finner dine svake sider.",
+                topic_basic: "Grunnleggende",
                 topic_chain: "Kjerneregelen",
                 topic_product: "Produktregelen",
                 topic_quotient: "Brøkregelen",
@@ -474,14 +512,21 @@
                 nav_dashboard: "Dashboard",
                 nav_theory: "Theory Bank",
                 nav_practice: "Practice Arena",
+                nav_marked: "Need Practice",
                 nav_stats: "My Stats",
                 nav_help: "Help",
+                marked_title: "Problems that need practice",
+                marked_subtitle: "Feel free to share this list with your teacher",
+                marked_empty_title: "No marked problems!",
+                marked_empty_desc: "When you mark a problem as \"Need Practice\" in the practice arena, it will appear here.",
+                btn_print: "Print",
                 dash_welcome: "Welcome!",
                 dash_subtitle: "What to practice today?",
                 dash_focus_header: "Focus Training",
                 dash_focus_desc: "Choose rule, level and type yourself.",
                 mode_mix_title: "Smart Mix",
                 mode_mix_desc: "The algorithm finds your weak spots.",
+                topic_basic: "Basic Rules",
                 topic_chain: "Chain Rule",
                 topic_product: "Product Rule",
                 topic_quotient: "Quotient Rule",
@@ -537,14 +582,21 @@
                 nav_dashboard: "Tablero",
                 nav_theory: "Teoría",
                 nav_practice: "Arena de Práctica",
+                nav_marked: "Necesita Práctica",
                 nav_stats: "Mis Estadísticas",
                 nav_help: "Ayuda",
+                marked_title: "Problemas que necesitan práctica",
+                marked_subtitle: "Comparte esta lista con tu profesor si lo necesitas",
+                marked_empty_title: "¡No hay problemas marcados!",
+                marked_empty_desc: "Cuando marques un problema como \"Necesita Práctica\" en el área de práctica, aparecerá aquí.",
+                btn_print: "Imprimir",
                 dash_welcome: "¡Bienvenido!",
                 dash_subtitle: "¿Qué quieres practicar?",
                 dash_focus_header: "Entrenamiento Enfocado",
                 dash_focus_desc: "Elige regla, nivel y tipo tú mismo.",
                 mode_mix_title: "Mezcla Inteligente",
                 mode_mix_desc: "El algoritmo encuentra tus debilidades.",
+                topic_basic: "Reglas Básicas",
                 topic_chain: "Regla de la Cadena",
                 topic_product: "Regla del Producto",
                 topic_quotient: "Regla del Cociente",
@@ -600,14 +652,21 @@
                 nav_dashboard: "Огляд",
                 nav_theory: "Банк Теорії",
                 nav_practice: "Арена Практики",
+                nav_marked: "Потребує Практики",
                 nav_stats: "Моя Статистика",
                 nav_help: "Допомога",
+                marked_title: "Завдання, які потребують практики",
+                marked_subtitle: "Поділіться цим списком з вчителем за потреби",
+                marked_empty_title: "Немає позначених завдань!",
+                marked_empty_desc: "Коли ви позначите завдання як \"Потребує Практики\" на арені практики, воно з'явиться тут.",
+                btn_print: "Друкувати",
                 dash_welcome: "Ласкаво просимо!",
                 dash_subtitle: "Що ви хочете тренувати сьогодні?",
                 dash_focus_header: "Фокусне Тренування",
                 dash_focus_desc: "Виберіть правило, рівень і тип самостійно. Ідеально для інтенсивного тренування.",
                 mode_mix_title: "Розумний Мікс",
                 mode_mix_desc: "Алгоритм знаходить ваші слабкі місця.",
+                topic_basic: "Основні Правила",
                 topic_chain: "Правило Ланцюга",
                 topic_product: "Правило Добутку",
                 topic_quotient: "Правило Частки",
@@ -662,6 +721,268 @@
         };
 
         const theoryData = {
+            basic: {
+                no: {
+                    title: "Grunnleggende derivasjonsregler",
+                    intro: "Disse reglene er byggesteinene for all derivasjon. Du må kunne dem før du går videre til kjerne-, produkt- og brøkregelen.",
+                    formula: "",
+                    ruleText: "",
+                    whenToUse: `
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h4 class="font-bold text-blue-900 mb-2">📐 Potensregelen</h4>
+                                <div class="text-center text-lg mb-2">$(x^n)' = n \\cdot x^{n-1}$</div>
+                                <p class="text-sm text-blue-800 mb-2">Gjelder for alle reelle tall $n \\neq 0$</p>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="bg-white p-2 rounded">$(x^3)' = 3x^2$</div>
+                                    <div class="bg-white p-2 rounded">$(x^{-2})' = -2x^{-3}$</div>
+                                    <div class="bg-white p-2 rounded">$(\\sqrt{x})' = (x^{1/2})' = \\frac{1}{2\\sqrt{x}}$</div>
+                                    <div class="bg-white p-2 rounded">$(x)' = 1$</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                                <h4 class="font-bold text-emerald-900 mb-2">📈 Eksponentialfunksjonen</h4>
+                                <div class="text-center text-lg mb-2">$(e^x)' = e^x$</div>
+                                <p class="text-sm text-emerald-800 mb-2">Den eneste funksjonen som er lik sin egen deriverte!</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    For andre grunntall: $(a^x)' = a^x \\cdot \\ln(a)$
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                                <h4 class="font-bold text-amber-900 mb-2">📊 Naturlig logaritme</h4>
+                                <div class="text-center text-lg mb-2">$(\\ln x)' = \\frac{1}{x}$</div>
+                                <p class="text-sm text-amber-800 mb-2">Gjelder for $x > 0$</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    For andre grunntall: $(\\log_a x)' = \\frac{1}{x \\cdot \\ln(a)}$
+                                </div>
+                            </div>
+
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h4 class="font-bold text-purple-900 mb-2">➕ Sum- og konstantregler</h4>
+                                <div class="space-y-2 text-center">
+                                    <div>$(c)' = 0$ <span class="text-sm text-purple-600">Konstanter forsvinner</span></div>
+                                    <div>$(c \\cdot f(x))' = c \\cdot f'(x)$ <span class="text-sm text-purple-600">Konstanter kan flyttes ut</span></div>
+                                    <div>$(f(x) + g(x))' = f'(x) + g'(x)$ <span class="text-sm text-purple-600">Deriver ledd for ledd</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 mt-6">
+                            <h4 class="font-bold text-stone-800 mb-3">🔍 Eksempel: $f(x) = 3x^4 + 2e^x - 5\\ln x + 7$</h4>
+                            <div class="space-y-2 text-sm">
+                                <p>Vi deriverer ledd for ledd:</p>
+                                <ul class="list-disc list-inside space-y-1 ml-4">
+                                    <li>$(3x^4)' = 3 \\cdot 4x^3 = 12x^3$ (potensregel + konstant ut)</li>
+                                    <li>$(2e^x)' = 2e^x$ (eksponentialregel + konstant ut)</li>
+                                    <li>$(-5\\ln x)' = -5 \\cdot \\frac{1}{x} = -\\frac{5}{x}$ (ln-regel + konstant ut)</li>
+                                    <li>$(7)' = 0$ (konstantregel)</li>
+                                </ul>
+                                <div class="bg-emerald-100 p-3 rounded mt-3 text-center">
+                                    <strong>Svar:</strong> $f'(x) = 12x^3 + 2e^x - \\frac{5}{x}$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                en: {
+                    title: "Basic Derivative Rules",
+                    intro: "These rules are the building blocks for all differentiation. Master them before moving on to the chain, product, and quotient rules.",
+                    formula: "",
+                    ruleText: "",
+                    whenToUse: `
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h4 class="font-bold text-blue-900 mb-2">📐 Power Rule</h4>
+                                <div class="text-center text-lg mb-2">$(x^n)' = n \\cdot x^{n-1}$</div>
+                                <p class="text-sm text-blue-800 mb-2">Applies to all real numbers $n \\neq 0$</p>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="bg-white p-2 rounded">$(x^3)' = 3x^2$</div>
+                                    <div class="bg-white p-2 rounded">$(x^{-2})' = -2x^{-3}$</div>
+                                    <div class="bg-white p-2 rounded">$(\\sqrt{x})' = (x^{1/2})' = \\frac{1}{2\\sqrt{x}}$</div>
+                                    <div class="bg-white p-2 rounded">$(x)' = 1$</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                                <h4 class="font-bold text-emerald-900 mb-2">📈 Exponential Function</h4>
+                                <div class="text-center text-lg mb-2">$(e^x)' = e^x$</div>
+                                <p class="text-sm text-emerald-800 mb-2">The only function equal to its own derivative!</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    For other bases: $(a^x)' = a^x \\cdot \\ln(a)$
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                                <h4 class="font-bold text-amber-900 mb-2">📊 Natural Logarithm</h4>
+                                <div class="text-center text-lg mb-2">$(\\ln x)' = \\frac{1}{x}$</div>
+                                <p class="text-sm text-amber-800 mb-2">Applies for $x > 0$</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    For other bases: $(\\log_a x)' = \\frac{1}{x \\cdot \\ln(a)}$
+                                </div>
+                            </div>
+
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h4 class="font-bold text-purple-900 mb-2">➕ Sum and Constant Rules</h4>
+                                <div class="space-y-2 text-center">
+                                    <div>$(c)' = 0$ <span class="text-sm text-purple-600">Constants disappear</span></div>
+                                    <div>$(c \\cdot f(x))' = c \\cdot f'(x)$ <span class="text-sm text-purple-600">Constants can be factored out</span></div>
+                                    <div>$(f(x) + g(x))' = f'(x) + g'(x)$ <span class="text-sm text-purple-600">Differentiate term by term</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 mt-6">
+                            <h4 class="font-bold text-stone-800 mb-3">🔍 Example: $f(x) = 3x^4 + 2e^x - 5\\ln x + 7$</h4>
+                            <div class="space-y-2 text-sm">
+                                <p>We differentiate term by term:</p>
+                                <ul class="list-disc list-inside space-y-1 ml-4">
+                                    <li>$(3x^4)' = 3 \\cdot 4x^3 = 12x^3$ (power rule + constant out)</li>
+                                    <li>$(2e^x)' = 2e^x$ (exponential rule + constant out)</li>
+                                    <li>$(-5\\ln x)' = -5 \\cdot \\frac{1}{x} = -\\frac{5}{x}$ (ln rule + constant out)</li>
+                                    <li>$(7)' = 0$ (constant rule)</li>
+                                </ul>
+                                <div class="bg-emerald-100 p-3 rounded mt-3 text-center">
+                                    <strong>Answer:</strong> $f'(x) = 12x^3 + 2e^x - \\frac{5}{x}$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                es: {
+                    title: "Reglas Básicas de Derivación",
+                    intro: "Estas reglas son los bloques fundamentales de toda derivación. Domínalas antes de pasar a las reglas de la cadena, producto y cociente.",
+                    formula: "",
+                    ruleText: "",
+                    whenToUse: `
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h4 class="font-bold text-blue-900 mb-2">📐 Regla de Potencia</h4>
+                                <div class="text-center text-lg mb-2">$(x^n)' = n \\cdot x^{n-1}$</div>
+                                <p class="text-sm text-blue-800 mb-2">Se aplica a todos los números reales $n \\neq 0$</p>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="bg-white p-2 rounded">$(x^3)' = 3x^2$</div>
+                                    <div class="bg-white p-2 rounded">$(x^{-2})' = -2x^{-3}$</div>
+                                    <div class="bg-white p-2 rounded">$(\\sqrt{x})' = (x^{1/2})' = \\frac{1}{2\\sqrt{x}}$</div>
+                                    <div class="bg-white p-2 rounded">$(x)' = 1$</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                                <h4 class="font-bold text-emerald-900 mb-2">📈 Función Exponencial</h4>
+                                <div class="text-center text-lg mb-2">$(e^x)' = e^x$</div>
+                                <p class="text-sm text-emerald-800 mb-2">¡La única función igual a su propia derivada!</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    Para otras bases: $(a^x)' = a^x \\cdot \\ln(a)$
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                                <h4 class="font-bold text-amber-900 mb-2">📊 Logaritmo Natural</h4>
+                                <div class="text-center text-lg mb-2">$(\\ln x)' = \\frac{1}{x}$</div>
+                                <p class="text-sm text-amber-800 mb-2">Se aplica para $x > 0$</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    Para otras bases: $(\\log_a x)' = \\frac{1}{x \\cdot \\ln(a)}$
+                                </div>
+                            </div>
+
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h4 class="font-bold text-purple-900 mb-2">➕ Reglas de Suma y Constantes</h4>
+                                <div class="space-y-2 text-center">
+                                    <div>$(c)' = 0$ <span class="text-sm text-purple-600">Las constantes desaparecen</span></div>
+                                    <div>$(c \\cdot f(x))' = c \\cdot f'(x)$ <span class="text-sm text-purple-600">Las constantes se pueden sacar</span></div>
+                                    <div>$(f(x) + g(x))' = f'(x) + g'(x)$ <span class="text-sm text-purple-600">Derivar término a término</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 mt-6">
+                            <h4 class="font-bold text-stone-800 mb-3">🔍 Ejemplo: $f(x) = 3x^4 + 2e^x - 5\\ln x + 7$</h4>
+                            <div class="space-y-2 text-sm">
+                                <p>Derivamos término a término:</p>
+                                <ul class="list-disc list-inside space-y-1 ml-4">
+                                    <li>$(3x^4)' = 3 \\cdot 4x^3 = 12x^3$ (regla de potencia + constante)</li>
+                                    <li>$(2e^x)' = 2e^x$ (regla exponencial + constante)</li>
+                                    <li>$(-5\\ln x)' = -5 \\cdot \\frac{1}{x} = -\\frac{5}{x}$ (regla ln + constante)</li>
+                                    <li>$(7)' = 0$ (regla de constantes)</li>
+                                </ul>
+                                <div class="bg-emerald-100 p-3 rounded mt-3 text-center">
+                                    <strong>Respuesta:</strong> $f'(x) = 12x^3 + 2e^x - \\frac{5}{x}$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                },
+                uk: {
+                    title: "Основні правила диференціювання",
+                    intro: "Ці правила є будівельними блоками для всього диференціювання. Опануйте їх перед переходом до правила ланцюга, добутку та частки.",
+                    formula: "",
+                    ruleText: "",
+                    whenToUse: `
+                        <div class="space-y-6">
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h4 class="font-bold text-blue-900 mb-2">📐 Правило степеня</h4>
+                                <div class="text-center text-lg mb-2">$(x^n)' = n \\cdot x^{n-1}$</div>
+                                <p class="text-sm text-blue-800 mb-2">Застосовується для всіх дійсних чисел $n \\neq 0$</p>
+                                <div class="grid grid-cols-2 gap-2 text-sm">
+                                    <div class="bg-white p-2 rounded">$(x^3)' = 3x^2$</div>
+                                    <div class="bg-white p-2 rounded">$(x^{-2})' = -2x^{-3}$</div>
+                                    <div class="bg-white p-2 rounded">$(\\sqrt{x})' = (x^{1/2})' = \\frac{1}{2\\sqrt{x}}$</div>
+                                    <div class="bg-white p-2 rounded">$(x)' = 1$</div>
+                                </div>
+                            </div>
+
+                            <div class="bg-emerald-50 p-4 rounded-lg border border-emerald-100">
+                                <h4 class="font-bold text-emerald-900 mb-2">📈 Експоненціальна функція</h4>
+                                <div class="text-center text-lg mb-2">$(e^x)' = e^x$</div>
+                                <p class="text-sm text-emerald-800 mb-2">Єдина функція, що дорівнює власній похідній!</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    Для інших основ: $(a^x)' = a^x \\cdot \\ln(a)$
+                                </div>
+                            </div>
+
+                            <div class="bg-amber-50 p-4 rounded-lg border border-amber-100">
+                                <h4 class="font-bold text-amber-900 mb-2">📊 Натуральний логарифм</h4>
+                                <div class="text-center text-lg mb-2">$(\\ln x)' = \\frac{1}{x}$</div>
+                                <p class="text-sm text-amber-800 mb-2">Застосовується для $x > 0$</p>
+                                <div class="bg-white p-2 rounded text-sm">
+                                    Для інших основ: $(\\log_a x)' = \\frac{1}{x \\cdot \\ln(a)}$
+                                </div>
+                            </div>
+
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h4 class="font-bold text-purple-900 mb-2">➕ Правила суми та констант</h4>
+                                <div class="space-y-2 text-center">
+                                    <div>$(c)' = 0$ <span class="text-sm text-purple-600">Константи зникають</span></div>
+                                    <div>$(c \\cdot f(x))' = c \\cdot f'(x)$ <span class="text-sm text-purple-600">Константи можна винести</span></div>
+                                    <div>$(f(x) + g(x))' = f'(x) + g'(x)$ <span class="text-sm text-purple-600">Диференціювати член за членом</span></div>
+                                </div>
+                            </div>
+                        </div>
+                    `,
+                    detailedExample: `
+                        <div class="bg-stone-50 p-4 rounded-lg border border-stone-200 mt-6">
+                            <h4 class="font-bold text-stone-800 mb-3">🔍 Приклад: $f(x) = 3x^4 + 2e^x - 5\\ln x + 7$</h4>
+                            <div class="space-y-2 text-sm">
+                                <p>Диференціюємо член за членом:</p>
+                                <ul class="list-disc list-inside space-y-1 ml-4">
+                                    <li>$(3x^4)' = 3 \\cdot 4x^3 = 12x^3$ (правило степеня + константа)</li>
+                                    <li>$(2e^x)' = 2e^x$ (експоненціальне правило + константа)</li>
+                                    <li>$(-5\\ln x)' = -5 \\cdot \\frac{1}{x} = -\\frac{5}{x}$ (правило ln + константа)</li>
+                                    <li>$(7)' = 0$ (правило констант)</li>
+                                </ul>
+                                <div class="bg-emerald-100 p-3 rounded mt-3 text-center">
+                                    <strong>Відповідь:</strong> $f'(x) = 12x^3 + 2e^x - \\frac{5}{x}$
+                                </div>
+                            </div>
+                        </div>
+                    `
+                }
+            },
             chain: {
                 no: {
                     title: "Kjerneregelen",
@@ -1482,15 +1803,48 @@
             return n === 1 ? "" : `^${n}`;
         }
 
+        /**
+         * Formats a fraction with smart simplification
+         * @param {string|number} num - Numerator
+         * @param {string} denom - Denominator
+         * @param {number} [coeff=1] - Coefficient to multiply in
+         * @returns {string} LaTeX-formatted fraction
+         */
+        function formatFraction(num, denom, coeff = 1) {
+            // If numerator is 1 and we have a coefficient, multiply in
+            if ((num === 1 || num === '1') && coeff !== 1) {
+                return `\\frac{${coeff}}{${denom}}`;
+            }
+
+            // If both numerator and coefficient are numbers, multiply them
+            if (typeof num === 'number' && typeof coeff === 'number' && coeff !== 1) {
+                return `\\frac{${num * coeff}}{${denom}}`;
+            }
+
+            // Otherwise, show multiplication explicitly if coeff != 1
+            if (coeff !== 1) {
+                return `\\frac{${coeff} \\cdot ${num}}{${denom}}`;
+            }
+
+            return `\\frac{${num}}{${denom}}`;
+        }
+
         function generateProblemBank() {
             let id = 1000;
             const types = ['poly', 'root', 'exp', 'log'];
             const rules = ['chain', 'product', 'quotient'];
             const levels = [1, 2, 3, 4, 5];
-            
+
             const bank = [];
+            const seenQuestions = new Set();  // Track unique questions
 
             const add = (topic, level, type, q, a, steps, hint) => {
+                // Check for duplicates before adding
+                const key = `${topic}-${level}-${type}-${q}`;
+                if (seenQuestions.has(key)) {
+                    return; // Skip duplicate
+                }
+                seenQuestions.add(key);
                 bank.push({ id: id++, topic, level, type, q, a, steps, hint });
             };
 
@@ -1791,17 +2145,18 @@ $$`,
                     // (x + a) · √x - linear times root
                     const u = `x ${fmtNum(a)}`;
                     const raw = `1 \\cdot \\sqrt{x} + (${u}) \\cdot \\frac{1}{2\\sqrt{x}}`;
-                    const combined = `\\frac{2\\sqrt{x} \\cdot \\sqrt{x} + (${u})}{2\\sqrt{x}}`;
-                    const simp = `\\frac{2x ${fmtNum(a)}}{2\\sqrt{x}}`;
-                    const ans = `f'(x) = \\frac{2x ${fmtNum(a)}}{2\\sqrt{x}}`;
+                    const combined = `\\frac{2x + (${u})}{2\\sqrt{x}}`;
+                    const simp = `\\frac{3x ${fmtNum(a)}}{2\\sqrt{x}}`;
+                    const ans = `f'(x) = ${simp}`;
                     const steps = `f'(x) &= u'v + uv' \\\\
 &= ${raw} \\\\
-&= ${ans}`;
+&= ${combined} \\\\
+&= ${simp}`;
                     return {
                         q: `f(x) = (${u})\\sqrt{x}`,
                         a: `$$ ${ans} $$`,
                         steps: makeAlignedSteps(u, `\\sqrt{x}`, `1`, `\\frac{1}{2\\sqrt{x}}`, steps),
-                        hint: "Lineært uttrykk ganger kvadratrot."
+                        hint: "Lineært uttrykk ganger kvadratrot - fellesnevner."
                     };
                 });
             }
@@ -3247,7 +3602,29 @@ $$`;
             const par = (val) => val < 0 ? `(${val})` : val;
 
             // Helper to create aligned environment steps for chain rule
-            const makeChainSteps = (gu, u, gpu, up, substitution, final) => {
+            const makeChainSteps = (gu, u, gpu, up, substitution, final, options = {}) => {
+                const { isNested = false, innerExplanation = '' } = options;
+
+                if (isNested) {
+                    return `$$
+\\begin{aligned}
+&\\textbf{Steg 1: Identifiser ytre og indre funksjon} \\\\
+&\\text{Ytre funksjon: } g(u) = ${gu} \\\\
+&\\text{Indre funksjon: } u(x) = ${u} \\\\[0.5em]
+&\\textbf{Steg 2: Merk at } u(x) \\textbf{ også er sammensatt!} \\\\
+&${innerExplanation} \\\\[0.5em]
+&\\textbf{Steg 3: Deriver med kjerneregelen (to ganger)} \\\\
+&g'(u) = ${gpu} \\\\
+&u'(x) = ${up} \\quad \\text{← kjerneregelen brukt her også!} \\\\[0.5em]
+&\\textbf{Steg 4: Sett sammen} \\\\
+&f'(x) = g'(u) \\cdot u'(x) \\\\
+&= ${substitution} \\\\
+&= ${final}
+\\end{aligned}
+$$`;
+                }
+
+                // Standard format for simple chain rule
                 return `$$
 \\begin{aligned}
 g(u) &= ${gu} & u(x) &= ${u} \\\\
@@ -3835,8 +4212,11 @@ $$`;
                     return {
                         q: `f(x) = e^{e^{${inner}}}`,
                         a: `$$ f'(x) = ${final} $$`,
-                        steps: makeChainSteps(gu, u_val, gpu, up, subst, final),
-                        hint: "Dobbel eksponential - ekstremt utfordrende!"
+                        steps: makeChainSteps(gu, u_val, gpu, up, subst, final, {
+                            isNested: true,
+                            innerExplanation: `u(x) = e^{${inner}} \\text{ har kjernen } ${inner}`
+                        }),
+                        hint: "Dobbel eksponential - kjerneregelen brukes TO ganger!"
                     };
                 });
             }
@@ -4022,8 +4402,11 @@ $$`;
                     return {
                         q: `f(x) = \\ln(\\ln(${inner}))`,
                         a: `$$ f'(x) = ${final} $$`,
-                        steps: makeChainSteps(gu, u_val, gpu, up, subst, final),
-                        hint: "Dobbel logaritme - ekstremt utfordrende!"
+                        steps: makeChainSteps(gu, u_val, gpu, up, subst, final, {
+                            isNested: true,
+                            innerExplanation: `u(x) = \\ln(${inner}) \\text{ har kjernen } ${inner}`
+                        }),
+                        hint: "Dobbel logaritme - kjerneregelen brukes TO ganger!"
                     };
                 });
             }
@@ -4111,6 +4494,8 @@ $$`;
             
             if (viewId === 'stats') updateChartData();
 
+            if (viewId === 'marked') renderMarkedProblems();
+
             // Re-render math
             if (window.MathJax) MathJax.typeset();
         }
@@ -4169,21 +4554,31 @@ $$`;
         }
 
         function applyFiltersAndDraw() {
-            let candidates = problemBank.filter(p => 
+            let candidates = problemBank.filter(p =>
                 p.topic === state.activeTopic &&
                 state.filters.levels.includes(p.level) &&
                 state.filters.types.includes(p.type)
             );
-            
+
             if (candidates.length === 0) {
                 alert(i18n[state.language].no_problems_found);
                 return;
             }
 
+            // Remove duplicates based on question text
+            const seenQuestions = new Set();
+            candidates = candidates.filter(p => {
+                if (seenQuestions.has(p.q)) {
+                    return false;
+                }
+                seenQuestions.add(p.q);
+                return true;
+            });
+
             candidates.sort(() => 0.5 - Math.random());
             state.activeProblems = candidates.slice(0, 5);
             state.activeProblems.sort((a, b) => a.level - b.level);
-            
+
             renderProblems();
         }
 
@@ -4279,24 +4674,24 @@ $$`;
                 weight *= 3; // Higher boost to make recommended tasks more prominent
             }
 
-            // Adaptive difficulty: adjust weight based on topic mastery and problem difficulty
-            const preferredDifficulty = getPreferredDifficultyForTopic(problem.topic);
-            const difficultyDiff = Math.abs(problem.level - preferredDifficulty);
+            // Progressive difficulty based on ceiling
+            const ceiling = state.topicCeilings[problem.topic] || 1;
 
-            // For beginners (preferred difficulty 1), strongly favor easier levels
-            if (preferredDifficulty === 1) {
-                if (problem.level === 1) {
-                    weight *= 3; // Strongly prefer level 1 for beginners
-                } else if (problem.level === 2) {
-                    weight *= 1.5; // Some level 2 is okay
-                } else {
-                    weight *= 0.2; // Heavily penalize level 3+
-                }
+            if (problem.level < ceiling - 1) {
+                // More than 1 level below ceiling: strong reduction (already mastered)
+                weight *= 0.1;
+            } else if (problem.level < ceiling) {
+                // Right below ceiling: some reduction (repetition/consolidation)
+                weight *= 0.4;
+            } else if (problem.level === ceiling) {
+                // At ceiling: normal weight with boost (current focus)
+                weight *= 1.2;
+            } else if (problem.level === ceiling + 1) {
+                // One above ceiling: high weight (progression/challenge)
+                weight *= 2.0;
             } else {
-                // For experienced users, use normal difficulty matching
-                if (difficultyDiff > 1) {
-                    weight *= 0.5;
-                }
+                // Far above ceiling: moderate weight (occasional challenge)
+                weight *= 0.8;
             }
 
             return weight;
@@ -4525,10 +4920,172 @@ $$`;
             if(!el.classList.contains('hidden') && window.MathJax) MathJax.typeset();
         }
 
+        // Helper function to get mastery rate for a specific level
+        function getLevelMasteryRate(topic, level) {
+            const key = `${topic}-${level}`;
+            const data = state.levelProgress[key];
+            if (!data || data.total === 0) return 0;
+            return data.mastered / data.total;
+        }
+
         function rateProblem(id, status) {
             state.progress[id] = status;
             localStorage.setItem('mathTrainerProgress', JSON.stringify(state.progress));
+
+            const problem = problemBank.find(p => p.id === id);
+            if (!problem) {
+                renderProblems();
+                return;
+            }
+
+            // Update level statistics
+            const key = `${problem.topic}-${problem.level}`;
+            if (!state.levelProgress[key]) {
+                state.levelProgress[key] = { mastered: 0, total: 0 };
+            }
+            state.levelProgress[key].total++;
+            if (status === 'mastered') {
+                state.levelProgress[key].mastered++;
+            }
+            localStorage.setItem('mathTrainerLevelProgress', JSON.stringify(state.levelProgress));
+
+            // Update ceiling if level is mastered
+            if (status === 'mastered') {
+                const masteryRate = getLevelMasteryRate(problem.topic, problem.level);
+                const currentCeiling = state.topicCeilings[problem.topic];
+
+                // Requirements to increase ceiling:
+                // - At least 3 problems attempted on this level
+                // - At least 70% mastery rate
+                // - Level is >= current ceiling
+                if (state.levelProgress[key].total >= 3 &&
+                    masteryRate >= 0.7 &&
+                    problem.level >= currentCeiling) {
+
+                    state.topicCeilings[problem.topic] = Math.min(problem.level + 1, 5);
+                    localStorage.setItem('mathTrainerCeilings', JSON.stringify(state.topicCeilings));
+                }
+            }
+
             renderProblems();
+        }
+
+        // Marked problems view functions
+        function renderMarkedProblems() {
+            const container = document.getElementById('marked-problems-container');
+            const texts = i18n[state.language];
+
+            // Find all problems marked as 'practice'
+            const markedIds = Object.entries(state.progress)
+                .filter(([id, status]) => status === 'practice')
+                .map(([id]) => parseInt(id));
+
+            const markedProblems = problemBank.filter(p => markedIds.includes(p.id));
+
+            // Update badge in nav
+            const badge = document.getElementById('marked-count-badge');
+            if (markedProblems.length > 0) {
+                badge.textContent = markedProblems.length;
+                badge.classList.remove('hidden');
+            } else {
+                badge.classList.add('hidden');
+            }
+
+            // Empty state
+            if (markedProblems.length === 0) {
+                container.innerHTML = `
+                    <div class="text-center py-16">
+                        <i class="fa-solid fa-circle-check text-5xl text-emerald-400 mb-4"></i>
+                        <h3 class="text-lg font-semibold text-stone-700 dark:text-slate-200 mb-2">${texts.marked_empty_title}</h3>
+                        <p class="text-stone-500 dark:text-slate-400">${texts.marked_empty_desc}</p>
+                    </div>
+                `;
+                return;
+            }
+
+            // Group by rule
+            const grouped = {
+                chain: markedProblems.filter(p => p.topic === 'chain'),
+                product: markedProblems.filter(p => p.topic === 'product'),
+                quotient: markedProblems.filter(p => p.topic === 'quotient')
+            };
+
+            let html = '';
+
+            for (const [topic, problems] of Object.entries(grouped)) {
+                if (problems.length === 0) continue;
+
+                const topicName = texts[`topic_${topic}`];
+
+                html += `
+                    <div class="bg-white dark:bg-slate-800 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm overflow-hidden">
+                        <div class="bg-amber-50 dark:bg-amber-900/20 px-4 py-3 border-b border-amber-100 dark:border-amber-800">
+                            <h3 class="font-bold text-amber-800 dark:text-amber-200">
+                                <i class="fa-solid fa-bookmark mr-2"></i>${topicName}
+                                <span class="text-amber-600 dark:text-amber-400 font-normal">(${problems.length})</span>
+                            </h3>
+                        </div>
+                        <div class="divide-y divide-stone-100 dark:divide-slate-700">
+                `;
+
+                problems.forEach(prob => {
+                    html += `
+                        <div class="p-4 hover:bg-stone-50 dark:hover:bg-slate-700/50 transition-colors">
+                            <div class="flex justify-between items-start gap-4">
+                                <div class="flex-1">
+                                    <div class="flex gap-2 text-xs mb-2">
+                                        <span class="bg-stone-100 dark:bg-slate-700 text-stone-500 dark:text-slate-400 px-2 py-0.5 rounded">Nivå ${prob.level}</span>
+                                    </div>
+                                    <div class="text-lg font-serif">$${prob.q}$</div>
+                                </div>
+                                <div class="flex gap-2">
+                                    <button onclick="toggleMarkedSolution(${prob.id})"
+                                            class="text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300">
+                                        <i class="fa-regular fa-eye mr-1"></i>${texts.btn_solution}
+                                    </button>
+                                    <button onclick="unmarkProblem(${prob.id})"
+                                            class="text-xs text-emerald-600 dark:text-emerald-400 hover:text-emerald-800 dark:hover:text-emerald-300">
+                                        <i class="fa-solid fa-check mr-1"></i>${texts.btn_mastered}
+                                    </button>
+                                </div>
+                            </div>
+                            <div id="marked-sol-${prob.id}" class="hidden mt-4 pt-4 border-t border-stone-100 dark:border-slate-700">
+                                <div class="text-center text-lg font-serif text-stone-800 dark:text-slate-200 mb-2">${prob.a}</div>
+                                <details class="text-sm text-stone-500 dark:text-slate-400">
+                                    <summary class="cursor-pointer hover:text-stone-700 dark:hover:text-slate-300">Vis utregning</summary>
+                                    <div class="mt-2 pl-4 border-l-2 border-stone-200 dark:border-slate-600">${prob.steps}</div>
+                                </details>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                html += `
+                        </div>
+                    </div>
+                `;
+            }
+
+            container.innerHTML = html;
+            if (window.MathJax) MathJax.typeset();
+        }
+
+        function toggleMarkedSolution(id) {
+            const el = document.getElementById(`marked-sol-${id}`);
+            el.classList.toggle('hidden');
+            if (!el.classList.contains('hidden') && window.MathJax) {
+                MathJax.typeset();
+            }
+        }
+
+        function unmarkProblem(id) {
+            state.progress[id] = 'mastered';
+            localStorage.setItem('mathTrainerProgress', JSON.stringify(state.progress));
+            renderMarkedProblems();
+        }
+
+        function printMarkedProblems() {
+            window.print();
         }
 
         function clearProgress() {
@@ -4539,11 +5096,19 @@ $$`;
                 state.hints = [];
                 state.recentlyShown = [];
                 state.activeProblems = [];
+                state.topicCeilings = {
+                    chain: 1,
+                    product: 1,
+                    quotient: 1
+                };
+                state.levelProgress = {};
 
                 // Clear all localStorage items
                 localStorage.removeItem('mathTrainerProgress');
                 localStorage.removeItem('mathTrainerHints');
                 localStorage.removeItem('mathTrainerRecentlyShown');
+                localStorage.removeItem('mathTrainerCeilings');
+                localStorage.removeItem('mathTrainerLevelProgress');
 
                 // Update all views
                 updateChartData();
