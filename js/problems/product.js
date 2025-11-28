@@ -776,9 +776,11 @@ export function generateProductLog(lvl, a, b, n, add, makeAlignedSteps, par, r) 
             const v = `\\ln(${inner})`;
             const vp = `\\frac{${a}}{${inner}}`;
             const raw = `1 \\cdot ${v} + x \\cdot ${vp}`;
-            const ans = `f'(x) = ${raw}`;
+            const simplified = `${v} + \\frac{${a}x}{${inner}}`;
+            const ans = `f'(x) = ${simplified}`;
             const steps = `f'(x) &= u'v + uv' \\\\
-&= ${raw}`;
+&= ${raw} \\\\
+&= ${simplified}`;
             return {
                 q: `f(x) = x\\ln(${inner})`,
                 a: `$$ ${ans} $$`,

@@ -362,13 +362,15 @@ export function generateQuotientRoot(lvl, a, b, n, add) {
         patterns.push(() => {
             // x/√(ax + b) - linear over root with chain
             const num = `x`;
-            const denom = `\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}`;
-            const denomDeriv = `\\frac{${a}}{2\\sqrt{${fmt(a,'x')} ${fmtNum(b)}}}`;
+            const inner = `${fmt(a,'x')} ${fmtNum(b)}`;
+            const denom = `\\sqrt{${inner}}`;
+            const denomDeriv = `\\frac{${a}}{2\\sqrt{${inner}}}`;
             const rawNum = `1 \\cdot ${denom} - x \\cdot ${denomDeriv}`;
-            const ans = `f'(x) = \\frac{${rawNum}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+            const simplifiedNum = `${denom} - \\frac{${a}x}{2\\sqrt{${inner}}}`;
+            const ans = `f'(x) = \\frac{${simplifiedNum}}{${inner}}`;
             const steps = `f'(x) &= \\frac{u'v - uv'}{v^2} \\\\
 &= \\frac{${rawNum}}{(${denom})^2} \\\\
-&= \\frac{${rawNum}}{${fmt(a,'x')} ${fmtNum(b)}}`;
+&= \\frac{${simplifiedNum}}{${inner}}`;
             return {
                 q: `f(x) = \\frac{${num}}{${denom}}`,
                 a: `$$ ${ans} $$`,
