@@ -12,6 +12,8 @@ An interactive web application for practicing derivative rules in mathematics. B
 - **Multilingual Support**: Norwegian, English, Spanish, and Ukrainian interfaces
 - **Five Difficulty Levels**: Progressive complexity from basic polynomials to advanced functions
 - **Hint System**: Contextual hints with formulas and examples to guide learning
+- **Dark Mode**: Full dark theme support with automatic persistence across sessions
+- **Custom Favicon**: Mathematical derivative notation (f') that adapts to color scheme
 
 ## Technology Stack
 
@@ -36,7 +38,21 @@ Website: [lektorodd.no](https://lektorodd.no)
 
 ## Changelog
 
-### Version 1.0.1 (Current)
+### Version 1.0.2 (Current)
+
+UI/UX enhancement release with dark mode and branding improvements.
+
+#### New Features (v1.0.2)
+- **Dark Mode**: Comprehensive dark theme implementation with Tailwind CSS
+  - Theme toggle button in header with sun/moon icons
+  - Dark mode variants for all UI components (navbar, sidebar, cards, forms, buttons)
+  - Theme preference persists across sessions using localStorage
+  - Smooth color transitions between light and dark themes
+- **Favicon**: Custom SVG favicon featuring derivative notation (f')
+  - Adapts to system color scheme (blue in light mode, dark background in dark mode)
+  - Professional branding for browser tabs and bookmarks
+
+### Version 1.0.1
 
 Hotfix release for smart mix task generation.
 
@@ -105,7 +121,8 @@ Official launch with critical bug fixes and improvements.
 
 | Version | Status | Description |
 |---------|--------|-------------|
-| 1.0.1 | Current | Hotfix for duplicate task bug in smart mix |
+| 1.0.2 | Current | Dark mode and favicon implementation |
+| 1.0.1 | Stable | Hotfix for duplicate task bug in smart mix |
 | 1.0.0 | Stable | Official public release with critical bug fixes |
 | 0.9.0 | Archived | Pre-release with all core features implemented |
 
