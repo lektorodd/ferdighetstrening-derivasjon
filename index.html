@@ -1,0 +1,378 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ferdighetstrening Derivasjon</title>
+
+    <!-- Favicon -->
+    <link rel="icon" href="favicon.svg" type="image/svg+xml">
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+
+    <!-- Google Fonts: JetBrains Mono & Inter -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;700&display=swap" rel="stylesheet">
+
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- MathJax -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- FontAwesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .font-mono { font-family: 'JetBrains Mono', monospace; }
+        .fade-in { animation: fadeIn 0.3s ease-in-out; }
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        .chart-wrapper { position: relative; height: 250px; width: 100%; }
+
+        .filter-checkbox:checked + div {
+            background-color: #dbeafe;
+            border-color: #2563eb;
+            color: #1e40af;
+        }
+
+        .dark .filter-checkbox:checked + div {
+            background-color: #1e3a8a;
+            border-color: #3b82f6;
+            color: #93c5fd;
+        }
+
+        /* Custom select - FIX: appearance: none removes default arrow */
+        select {
+            appearance: none;
+            -webkit-appearance: none;
+            -moz-appearance: none;
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+            background-position: right 0.5rem center;
+            background-repeat: no-repeat;
+            background-size: 1.5em 1.5em;
+            padding-right: 2.5rem;
+            -webkit-print-color-adjust: exact;
+            print-color-adjust: exact;
+        }
+
+        .dark select {
+            background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
+        }
+    </style>
+</head>
+<body class="bg-stone-50 dark:bg-slate-900 text-stone-800 dark:text-slate-100 h-screen flex flex-col overflow-hidden">
+
+    <!-- TOP NAVIGATION -->
+    <header class="bg-white dark:bg-slate-800 border-b border-stone-200 dark:border-slate-700 shadow-sm z-20 flex-none">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
+            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('dashboard')">
+                <div class="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg">
+                    <i class="fa-solid fa-graduation-cap"></i>
+                </div>
+                <h1 class="text-xl font-bold tracking-tight text-stone-900 dark:text-slate-100">Ferdighetstrening <span class="text-blue-600 dark:text-blue-400">Derivasjon</span></h1>
+            </div>
+            <div class="flex items-center gap-3">
+                <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon/issues/new" target="_blank" class="px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" data-key="btn_report_issue">Tips/Feil?</a>
+                <button onclick="toggleTheme()" id="theme-toggle" class="p-2 text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" title="Toggle theme">
+                    <i class="fa-solid fa-sun dark-hidden"></i>
+                    <i class="fa-solid fa-moon light-hidden" style="display: none;"></i>
+                </button>
+                <div class="flex space-x-2 bg-stone-100 dark:bg-slate-700 p-1 rounded-lg">
+                <button onclick="setLanguage('no')" id="btn-no" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">NO</button>
+                <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">EN</button>
+                <button onclick="setLanguage('es')" id="btn-es" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">ES</button>
+                <button onclick="setLanguage('uk')" id="btn-uk" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">UK</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- SIDEBAR NAVIGATION -->
+        <nav class="hidden md:flex flex-col w-64 bg-white dark:bg-slate-800 border-r border-stone-200 dark:border-slate-700 pt-6">
+            <div class="flex-1 px-4 space-y-2">
+                <button onclick="navigateTo('dashboard')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-dashboard">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span data-key="nav_dashboard">Oversikt</span>
+                </button>
+                <button onclick="navigateTo('theory')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-theory">
+                    <i class="fa-solid fa-book-open w-5 text-center"></i>
+                    <span data-key="nav_theory">Teoribank</span>
+                </button>
+                <button onclick="navigateTo('practice')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-practice">
+                    <i class="fa-solid fa-dumbbell w-5 text-center"></i>
+                    <span data-key="nav_practice">Treningsarena</span>
+                </button>
+                <button onclick="navigateTo('marked')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-marked">
+                    <i class="fa-solid fa-bookmark w-5 text-center"></i>
+                    <span data-key="nav_marked">Trenger Øving</span>
+                    <span id="marked-count-badge" class="ml-auto bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 text-xs px-2 py-0.5 rounded-full hidden">0</span>
+                </button>
+                <button onclick="navigateTo('stats')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-stats">
+                    <i class="fa-solid fa-chart-simple w-5 text-center"></i>
+                    <span data-key="nav_stats">Min Statistikk</span>
+                </button>
+                <button onclick="navigateTo('help')" class="nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="nav-help">
+                    <i class="fa-solid fa-circle-question w-5 text-center"></i>
+                    <span data-key="nav_help">Hjelp</span>
+                </button>
+            </div>
+
+            <!-- FOOTER -->
+            <div class="p-4 mt-auto border-t border-stone-100 dark:border-slate-700">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 dark:text-slate-500 hover:text-stone-600 dark:hover:text-slate-300 transition-colors" title="View on GitHub">
+                        <i class="fa-brands fa-github text-sm"></i>
+                    </a>
+                    <p class="font-mono text-xs text-stone-400 dark:text-slate-500 leading-tight">v1.2.0</p>
+                </div>
+                <p class="font-mono text-xs text-stone-500 dark:text-slate-400 leading-tight">Torodd F. Ottestad</p>
+                <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline leading-tight">lektorodd</a>
+            </div>
+        </nav>
+
+        <!-- MAIN CONTENT AREA -->
+        <main class="flex-1 overflow-y-auto bg-stone-50 dark:bg-slate-900 p-4 sm:p-8 relative" id="main-container">
+
+            <!-- VIEW: DASHBOARD -->
+            <div id="view-dashboard" class="view-section fade-in">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100 mb-2" data-key="dash_welcome">Velkommen!</h2>
+                    <p class="text-stone-500 dark:text-slate-400 mb-8" data-key="dash_subtitle">Hva vil du trene på i dag?</p>
+
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                        <!-- Card: Smart Mix -->
+                        <div onclick="startMixMode()" class="bg-gradient-to-br from-indigo-500 to-purple-600 rounded-2xl p-8 text-white shadow-lg cursor-pointer hover:shadow-xl hover:scale-[1.02] transition-all group relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-8 opacity-20 transform translate-x-4 -translate-y-4">
+                                <i class="fa-solid fa-shuffle text-9xl"></i>
+                            </div>
+                            <div class="relative z-10 h-full flex flex-col">
+                                <div class="bg-white/20 w-12 h-12 rounded-lg flex items-center justify-center mb-6 group-hover:bg-white/30 transition-colors">
+                                    <i class="fa-solid fa-brain text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2" data-key="mode_mix_title">Smart Miks</h3>
+                                <p class="text-indigo-100 mb-8 flex-grow" data-key="mode_mix_desc">Algoritmen finner dine svake sider og gir deg en blanding.</p>
+                                <div class="flex items-center font-bold bg-white/10 self-start px-4 py-2 rounded-lg backdrop-blur-sm group-hover:bg-white/20 transition-colors">
+                                    <span data-key="btn_start_mix">Start Trening</span> <i class="fa-solid fa-arrow-right ml-2"></i>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Card: Focus Mode -->
+                        <div onclick="startFocusMode()" class="bg-white dark:bg-slate-800 rounded-2xl p-8 text-stone-800 dark:text-slate-100 shadow-lg border border-stone-200 dark:border-slate-700 cursor-pointer hover:shadow-xl hover:border-blue-300 dark:hover:border-blue-500 hover:scale-[1.02] transition-all group relative overflow-hidden">
+                            <div class="absolute top-0 right-0 p-8 opacity-5 dark:opacity-10 transform translate-x-4 -translate-y-4">
+                                <i class="fa-solid fa-crosshairs text-9xl text-blue-900 dark:text-blue-400"></i>
+                            </div>
+                            <div class="relative z-10 h-full flex flex-col">
+                                <div class="bg-blue-50 dark:bg-blue-900/30 w-12 h-12 rounded-lg flex items-center justify-center mb-6 text-blue-600 dark:text-blue-400 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                                    <i class="fa-solid fa-list-check text-2xl"></i>
+                                </div>
+                                <h3 class="text-2xl font-bold mb-2" data-key="dash_focus_header">Fokustrening</h3>
+                                <p class="text-stone-500 dark:text-slate-400 mb-8 flex-grow" data-key="dash_focus_desc">Velg selv regel, nivå og type. Perfekt for mengdetrening.</p>
+                                <div class="flex items-center font-bold text-blue-600 dark:text-blue-400 self-start px-4 py-2 rounded-lg bg-blue-50 dark:bg-blue-900/30 group-hover:bg-blue-100 dark:group-hover:bg-blue-900/50 transition-colors">
+                                    <span data-key="btn_start_focus">Gå til Fokus</span> <i class="fa-solid fa-arrow-right ml-2"></i>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: THEORY -->
+            <div id="view-theory" class="view-section hidden fade-in">
+                <div class="max-w-3xl mx-auto">
+                    <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100 mb-6" data-key="nav_theory">Teoribank</h2>
+
+                    <!-- Theory Topic Tabs -->
+                    <div class="flex gap-2 mb-6 bg-white dark:bg-slate-800 p-1 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm">
+                        <button onclick="setTheoryTopic('basic')" id="theory-tab-basic" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_basic">Grunnleggende</span>
+                        </button>
+                        <button onclick="setTheoryTopic('chain')" id="theory-tab-chain" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_chain">Kjerneregelen</span>
+                        </button>
+                        <button onclick="setTheoryTopic('product')" id="theory-tab-product" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_product">Produktregelen</span>
+                        </button>
+                        <button onclick="setTheoryTopic('quotient')" id="theory-tab-quotient" class="theory-tab flex-1 px-4 py-3 text-sm font-medium rounded-lg transition-all">
+                            <span data-key="topic_quotient">Brøkregelen</span>
+                        </button>
+                    </div>
+
+                    <div id="theory-content" class="bg-white dark:bg-slate-800 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm p-8"></div>
+                </div>
+            </div>
+
+            <!-- VIEW: PRACTICE -->
+            <div id="view-practice" class="view-section hidden fade-in">
+                <div class="max-w-3xl mx-auto">
+                    <div class="flex justify-between items-end mb-4">
+                        <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100" id="practice-title">Treningsarena</h2>
+                        <div class="flex bg-white dark:bg-slate-800 border border-stone-200 dark:border-slate-700 rounded-lg p-1 shadow-sm">
+                            <button onclick="setMode('focus')" id="mode-focus-btn" class="px-3 py-1 text-xs font-bold rounded transition-all">Fokus</button>
+                            <button onclick="setMode('mix')" id="mode-mix-btn" class="px-3 py-1 text-xs font-bold rounded transition-all">Smart Miks</button>
+                        </div>
+                    </div>
+
+                    <!-- FOCUS FILTER PANEL -->
+                    <div id="focus-filter-panel" class="hidden bg-white dark:bg-slate-800 p-6 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm mb-8 fade-in">
+                        <div class="mb-6">
+                            <label class="block text-xs font-bold text-stone-400 dark:text-slate-500 uppercase tracking-wider mb-2" data-key="filter_rule">Regel</label>
+                            <select id="focus-rule-select" onchange="changeFocusRule(this.value)" class="w-full p-2.5 bg-white dark:bg-slate-700 border border-stone-300 dark:border-slate-600 text-stone-900 dark:text-slate-100 text-sm rounded-lg focus:ring-blue-500 focus:border-blue-500 block shadow-sm">
+                                <option value="chain" data-key="topic_chain">Kjerneregelen</option>
+                                <option value="product" data-key="topic_product">Produktregelen</option>
+                                <option value="quotient" data-key="topic_quotient">Brøkregelen</option>
+                            </select>
+                        </div>
+
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                            <div>
+                                <h4 class="text-xs font-bold text-stone-400 dark:text-slate-500 uppercase tracking-wider mb-3" data-key="filter_levels">Vanskelighetsgrad</h4>
+                                <div class="flex gap-2 flex-wrap">
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="1" onchange="toggleFilter('level', 1)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 1</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="2" onchange="toggleFilter('level', 2)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 2</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="3" onchange="toggleFilter('level', 3)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 3</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="4" onchange="toggleFilter('level', 4)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 4</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="5" onchange="toggleFilter('level', 5)" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors">Nivå 5</div></label>
+                                </div>
+                            </div>
+                            <div>
+                                <h4 class="text-xs font-bold text-stone-400 dark:text-slate-500 uppercase tracking-wider mb-3" data-key="filter_types">Matematisk Område</h4>
+                                <div class="flex gap-2 flex-wrap">
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="poly" onchange="toggleFilter('type', 'poly')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_poly">Polynomer</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="root" onchange="toggleFilter('type', 'root')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_root">Røtter</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="exp" onchange="toggleFilter('type', 'exp')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_exp">Eksponential</div></label>
+                                    <label class="cursor-pointer"><input type="checkbox" class="filter-checkbox sr-only" value="log" onchange="toggleFilter('type', 'log')" checked><div class="px-3 py-1.5 rounded-md border border-stone-200 dark:border-slate-600 text-sm font-medium text-stone-600 dark:text-slate-300 hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" data-key="type_log">Logaritmer</div></label>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="flex justify-between items-center border-t border-stone-100 dark:border-slate-700 pt-4">
+                            <div class="text-xs text-stone-400 dark:text-slate-500">
+                                <span id="filter-count">0</span> oppgaver tilgjengelig
+                            </div>
+                            <button onclick="applyFiltersAndDraw()" class="bg-blue-600 dark:bg-blue-500 hover:bg-blue-700 dark:hover:bg-blue-600 text-white px-5 py-2 rounded-lg font-bold text-sm shadow-sm transition-colors">
+                                <i class="fa-solid fa-rotate mr-2"></i> <span data-key="btn_draw_focus">Trekk 5 oppgaver</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="problems-container" class="space-y-6 pb-12"></div>
+                </div>
+            </div>
+
+            <!-- VIEW: STATS -->
+            <div id="view-stats" class="view-section hidden fade-in">
+                <div class="max-w-5xl mx-auto">
+                    <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100 mb-6" data-key="nav_stats">Min Statistikk</h2>
+
+                    <!-- Top Metrics -->
+                    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-6">
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center">
+                            <span class="text-stone-500 dark:text-slate-400 text-xs uppercase font-bold tracking-wider mb-1" data-key="stat_total_attempted">Utført</span>
+                            <span class="text-3xl font-bold text-stone-800 dark:text-slate-200" id="stat-total-display">0</span>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center">
+                            <span class="text-stone-500 dark:text-slate-400 text-xs uppercase font-bold tracking-wider mb-1" data-key="stat_mastery_rate">Mestring</span>
+                            <span class="text-3xl font-bold text-emerald-600 dark:text-emerald-400" id="stat-mastery-display">0%</span>
+                        </div>
+                        <div class="bg-white dark:bg-slate-800 p-4 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm flex flex-col items-center justify-center">
+                            <span class="text-stone-500 dark:text-slate-400 text-xs uppercase font-bold tracking-wider mb-1" data-key="stat_hint_usage">Hint</span>
+                            <span class="text-3xl font-bold text-amber-500 dark:text-amber-400" id="stat-hint-display">0%</span>
+                        </div>
+                    </div>
+
+                    <!-- Charts Grid -->
+                    <div class="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
+                        <!-- Topic Chart -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm">
+                            <h3 class="font-semibold text-stone-800 dark:text-slate-200 mb-4" data-key="stat_chart_topic">Ferdighet per Emne</h3>
+                            <div class="chart-wrapper"><canvas id="topicChart"></canvas></div>
+                        </div>
+                        <!-- Level Chart (NEW) -->
+                        <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm">
+                            <h3 class="font-semibold text-stone-800 dark:text-slate-200 mb-4" data-key="stat_chart_level">Ferdighet per Nivå</h3>
+                            <div class="chart-wrapper"><canvas id="levelChart"></canvas></div>
+                        </div>
+                    </div>
+
+                    <!-- Overall Doughnut -->
+                    <div class="bg-white dark:bg-slate-800 p-6 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm max-w-md mx-auto">
+                        <h3 class="font-semibold text-stone-800 dark:text-slate-200 mb-4 text-center" data-key="stat_chart_total">Total Oversikt</h3>
+                        <div class="chart-wrapper"><canvas id="masteryChart"></canvas></div>
+                    </div>
+
+                    <!-- Clear Progress Button -->
+                    <div class="mt-8 text-center">
+                        <button onclick="clearProgress()" class="px-4 py-2 text-sm font-medium text-red-600 dark:text-red-400 bg-red-50 dark:bg-red-900/20 hover:bg-red-100 dark:hover:bg-red-900/30 border border-red-200 dark:border-red-800 rounded-lg transition-colors">
+                            <i class="fa-solid fa-trash-can mr-2"></i><span data-key="btn_clear_progress">Nullstill Fremgang</span>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- VIEW: MARKED PROBLEMS -->
+            <div id="view-marked" class="view-section hidden fade-in">
+                <div class="max-w-3xl mx-auto">
+                    <div class="flex justify-between items-center mb-6">
+                        <div>
+                            <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100" data-key="marked_title">Oppgaver som trenger øving</h2>
+                            <p class="text-stone-500 dark:text-slate-400 text-sm" data-key="marked_subtitle">Ta gjerne med denne listen til læreren</p>
+                        </div>
+                        <button onclick="printMarkedProblems()" class="text-stone-500 hover:text-stone-700 dark:text-slate-400 dark:hover:text-slate-200">
+                            <i class="fa-solid fa-print mr-1"></i> <span data-key="btn_print">Skriv ut</span>
+                        </button>
+                    </div>
+
+                    <div id="marked-problems-container" class="space-y-6"></div>
+                </div>
+            </div>
+
+            <!-- VIEW: HELP -->
+            <div id="view-help" class="view-section hidden fade-in">
+                <div class="max-w-3xl mx-auto bg-white dark:bg-slate-800 rounded-xl border border-stone-200 dark:border-slate-700 shadow-sm p-8">
+                    <h2 class="text-2xl font-bold text-stone-900 dark:text-slate-100 mb-6" data-key="help_title">Hjelp & Informasjon</h2>
+
+                    <div class="space-y-8">
+                        <div>
+                            <h3 class="font-bold text-lg text-blue-600 dark:text-blue-400 mb-2 flex items-center gap-2"><i class="fa-solid fa-crosshairs"></i> <span data-key="help_focus_title">Fokustrening</span></h3>
+                            <p class="text-stone-600 dark:text-slate-400 text-sm leading-relaxed" data-key="help_focus_desc">Her kan du skreddersy din egen økt. Velg hvilken regel du vil øve på (rullegardin), hvilke vanskelighetsgrader (1-5) og hvilke typer funksjoner. Trykk "Hent oppgaver" for å generere 5 unike oppgaver som passer dine valg.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-lg text-purple-600 dark:text-purple-400 mb-2 flex items-center gap-2"><i class="fa-solid fa-shuffle"></i> <span data-key="help_mix_title">Smart Miks</span></h3>
+                            <p class="text-stone-600 dark:text-slate-400 text-sm leading-relaxed" data-key="help_mix_desc">Dette er "den smarte læreren". Algoritmen ser på hva du har gjort før. Hvis du markerer oppgaver som "Trenger øving", vil Smart Miks gi deg flere av disse oppgavene senere. Den prioriterer også emner du har gjort lite av.</p>
+                        </div>
+
+                        <div>
+                            <h3 class="font-bold text-lg text-emerald-600 dark:text-emerald-400 mb-2 flex items-center gap-2"><i class="fa-solid fa-chart-simple"></i> <span data-key="help_stats_title">Statistikk & Progresjon</span></h3>
+                            <p class="text-stone-600 dark:text-slate-400 text-sm leading-relaxed" data-key="help_stats_desc">"Mestret" betyr at du føler deg trygg på oppgaven. "Trenger øving" betyr at du vil se den igjen senere. Statistikken viser deg hvor du er sterk (nivå/emne) og hvor du bør legge inn en ekstra innsats.</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <!-- ES6 Module Entry Point -->
+    <script type="module" src="js/app.js"></script>
+</body>
+</html>

@@ -17,17 +17,44 @@ An interactive web application for practicing derivative rules in mathematics. B
 
 ## Technology Stack
 
-- HTML5 with vanilla JavaScript
+- HTML5 with ES6 JavaScript modules
 - Tailwind CSS for styling
 - MathJax for mathematical notation
 - Chart.js for analytics visualization
 - LocalStorage for progress persistence
 
+## Project Structure
+
+```
+├── index.html              # Main entry point
+├── js/
+│   ├── app.js              # Application initialization
+│   ├── state.js            # State management
+│   ├── theme.js            # Dark/light mode handling
+│   ├── algorithm.js        # Smart mix algorithm
+│   ├── charts.js           # Chart.js integration
+│   ├── ui.js               # UI rendering functions
+│   ├── i18n.js             # Translations (NO/EN/ES/UK)
+│   ├── theory.js           # Theory content
+│   ├── utils.js            # Helper functions
+│   └── problems/
+│       ├── index.js        # Problem generator coordinator
+│       ├── chain.js        # Chain rule generators
+│       ├── product.js      # Product rule generators
+│       └── quotient.js     # Quotient rule generators
+├── favicon.svg             # Adaptive favicon
+└── README.md
+```
+
 ## Usage
 
 **Try it live:** [https://lektorodd.no/ki/derivasjon.html](https://lektorodd.no/ki/derivasjon.html)
 
-Or download and open `derivasjon.html` in a modern web browser. No installation or build process required.
+To run locally, serve the files with a local web server (required for ES6 modules):
+```bash
+python3 -m http.server 8080
+# Then open http://localhost:8080
+```
 
 ## Author
 
@@ -38,7 +65,32 @@ Website: [lektorodd.no](https://lektorodd.no)
 
 ## Changelog
 
-### Version 1.0.2 (Current)
+### Version 1.2.0 (Current)
+
+Major refactoring release - modular ES6 architecture.
+
+#### Architecture Changes (v1.2.0)
+- **Modular Codebase**: Refactored monolithic ~5200-line HTML file into 14 ES6 modules
+- **Clean Separation of Concerns**: State, UI, algorithm, i18n, and problem generators in separate files
+- **ES6 Import/Export**: Modern JavaScript module system for better maintainability
+- **Organized Problem Generators**: Chain, product, and quotient rules in dedicated modules
+
+### Version 1.1.0
+
+Feature release with bug fixes and new functionality.
+
+#### New Features (v1.1.0)
+- **Basic Derivative Rules Theory**: Added comprehensive "Grunnleggende" (Basic Rules) section to Theory Bank covering power rule, exponential, logarithm, and sum/constant rules in all 4 languages
+- **Nested Chain Rule Problems**: Level 5 chain rule now includes nested compositions like `ln(ln(x))` and `e^(e^x)` with detailed step-by-step solutions
+- **Progressive Difficulty System**: Smart algorithm tracks mastery per topic/level and adjusts difficulty ceiling automatically
+- **Marked Problems Overview**: New "Trenger Øving" (Needs Practice) view showing all marked problems grouped by topic with quick navigation
+
+#### Bug Fixes (v1.1.0)
+- **Fixed**: Root × polynomial simplification error in product rule - corrected algebra from `(2x+a)/(2√x)` to `(3x+a)/(2√x)`
+- **Fixed**: Duplicate problems appearing in focus mode - added deduplication in both problem bank generation and filter application
+- **Improved**: Better fraction display with `formatFraction()` helper function
+
+### Version 1.0.2
 
 UI/UX enhancement release with dark mode and branding improvements.
 
@@ -121,7 +173,9 @@ Official launch with critical bug fixes and improvements.
 
 | Version | Status | Description |
 |---------|--------|-------------|
-| 1.0.2 | Current | Dark mode and favicon implementation |
+| 1.2.0 | Current | Modular ES6 architecture refactoring |
+| 1.1.0 | Stable | Feature release with basic rules theory, nested chain rule, progressive difficulty |
+| 1.0.2 | Stable | Dark mode and favicon implementation |
 | 1.0.1 | Stable | Hotfix for duplicate task bug in smart mix |
 | 1.0.0 | Stable | Official public release with critical bug fixes |
 | 0.9.0 | Archived | Pre-release with all core features implemented |
