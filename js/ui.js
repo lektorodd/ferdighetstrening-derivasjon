@@ -369,6 +369,21 @@ export function toggleSolution(id) {
 }
 
 /**
+ * Updates the marked problems badge count in the sidebar
+ */
+export function updateMarkedBadge() {
+    const markedCount = Object.values(state.progress).filter(status => status === 'practice').length;
+    const badge = document.getElementById('marked-count-badge');
+
+    if (markedCount > 0) {
+        badge.textContent = markedCount;
+        badge.classList.remove('hidden');
+    } else {
+        badge.classList.add('hidden');
+    }
+}
+
+/**
  * Rates a problem as mastered or needs practice
  * @param {number} id - The problem ID
  * @param {string} status - 'mastered' or 'practice'
@@ -376,6 +391,7 @@ export function toggleSolution(id) {
 export function rateProblem(id, status) {
     state.progress[id] = status;
     saveProgress();
+    updateMarkedBadge();
 
     const problem = problemBank.find(p => p.id === id);
     if (!problem) {
@@ -430,13 +446,7 @@ export function renderMarkedProblems() {
     const markedProblems = problemBank.filter(p => markedIds.includes(p.id));
 
     // Update badge in nav
-    const badge = document.getElementById('marked-count-badge');
-    if (markedProblems.length > 0) {
-        badge.textContent = markedProblems.length;
-        badge.classList.remove('hidden');
-    } else {
-        badge.classList.add('hidden');
-    }
+    updateMarkedBadge();
 
     // Empty state
     if (markedProblems.length === 0) {

@@ -25,7 +25,8 @@ import {
     printMarkedProblems,
     clearProgress,
     setLanguage,
-    updateLanguageUI
+    updateLanguageUI,
+    updateMarkedBadge
 } from './ui.js';
 
 /**
@@ -44,6 +45,7 @@ function init() {
 
     // Update UI
     updateLanguageUI();
+    updateMarkedBadge();
     navigateTo('dashboard');
     renderChart();
 }
