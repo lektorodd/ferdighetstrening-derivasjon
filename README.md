@@ -65,7 +65,16 @@ Website: [lektorodd.no](https://lektorodd.no)
 
 ## Changelog
 
-### Version 1.2.1 (Current)
+### Version 1.2.2 (Current)
+
+Bug fix release for answer simplification.
+
+#### Bug Fixes (v1.2.2)
+- **Fixed**: Product rule answers now properly simplified (removes unnecessary "1·" from final display)
+- **Fixed**: Quotient rule answers now properly simplified (same issue)
+- Affected patterns: x·√(ax+b), x·ln(ax+b), x/√(ax+b)
+
+### Version 1.2.1
 
 Small improvements and UI polish.
 
@@ -181,7 +190,8 @@ Official launch with critical bug fixes and improvements.
 
 | Version | Status | Description |
 |---------|--------|-------------|
-| 1.2.1 | Current | Real-time badge updates, emoji language flags |
+| 1.2.2 | Current | Bug fix for answer simplification (removes "1·" from final answers) |
+| 1.2.1 | Stable | Real-time badge updates, emoji language flags |
 | 1.2.0 | Stable | Modular ES6 architecture refactoring |
 | 1.1.0 | Stable | Feature release with basic rules theory, nested chain rule, progressive difficulty |
 | 1.0.2 | Stable | Dark mode and favicon implementation |
