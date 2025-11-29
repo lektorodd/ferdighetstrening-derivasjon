@@ -75,6 +75,75 @@
         .dark select {
             background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3e%3cpath stroke='%239ca3af' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3e%3c/svg%3e");
         }
+
+        /* Mobile Navigation Drawer Animations */
+        .mobile-nav-open #mobile-nav-panel {
+            transform: translateX(0);
+        }
+
+        .mobile-nav-open #mobile-nav-backdrop {
+            opacity: 1;
+        }
+
+        /* Prevent body scroll when drawer is open */
+        body.mobile-nav-open {
+            overflow: hidden;
+        }
+
+        /* Mobile nav item hover states */
+        .mobile-nav-item {
+            color: #57534e; /* stone-600 */
+        }
+
+        .dark .mobile-nav-item {
+            color: #94a3b8; /* slate-400 */
+        }
+
+        .mobile-nav-item:hover {
+            background-color: #f5f5f4; /* stone-100 */
+        }
+
+        .dark .mobile-nav-item:hover {
+            background-color: #334155; /* slate-700 */
+        }
+
+        .mobile-nav-item.active {
+            background-color: #eff6ff; /* blue-50 */
+            color: #1d4ed8; /* blue-700 */
+        }
+
+        .dark .mobile-nav-item.active {
+            background-color: rgba(30, 58, 138, 0.3); /* blue-900/30 */
+            color: #60a5fa; /* blue-400 */
+        }
+
+        /* Language Dropdown Fade In */
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-10px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .lang-dropdown-show {
+            display: block !important;
+            animation: fadeInDown 0.2s ease-out;
+        }
+
+        /* Active language in dropdown */
+        .lang-dropdown-item.active {
+            background-color: #dbeafe; /* blue-100 */
+            color: #1e40af; /* blue-800 */
+        }
+
+        .dark .lang-dropdown-item.active {
+            background-color: rgba(30, 58, 138, 0.5); /* blue-900/50 */
+            color: #93c5fd; /* blue-300 */
+        }
     </style>
 </head>
 <body class="bg-stone-50 dark:bg-slate-900 text-stone-800 dark:text-slate-100 h-screen flex flex-col overflow-hidden">
@@ -82,27 +151,181 @@
     <!-- TOP NAVIGATION -->
     <header class="bg-white dark:bg-slate-800 border-b border-stone-200 dark:border-slate-700 shadow-sm z-20 flex-none">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex justify-between items-center">
-            <div class="flex items-center gap-3 cursor-pointer" onclick="navigateTo('dashboard')">
-                <div class="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg">
-                    <i class="fa-solid fa-graduation-cap"></i>
+            <!-- Hamburger Menu Button (Mobile Only) -->
+            <button
+                onclick="toggleMobileNav()"
+                id="mobile-nav-toggle"
+                class="md:hidden p-2 text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all relative"
+                aria-label="Toggle navigation menu"
+                aria-expanded="false"
+                aria-controls="mobile-nav-drawer"
+            >
+                <i class="fa-solid fa-bars text-xl"></i>
+                <!-- Badge positioned at top-right corner -->
+                <span id="hamburger-badge" class="absolute -top-1 -right-1 bg-amber-500 text-white text-xs font-bold w-5 h-5 flex items-center justify-center rounded-full hidden">0</span>
+            </button>
+            <div class="flex items-center gap-2 cursor-pointer" onclick="navigateTo('dashboard')">
+                <div class="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg flex-shrink-0">
+                    <i class="fa-solid fa-graduation-cap text-sm md:text-base"></i>
                 </div>
-                <h1 class="text-xl font-bold tracking-tight text-stone-900 dark:text-slate-100">Ferdighetstrening <span class="text-blue-600 dark:text-blue-400">Derivasjon</span></h1>
+                <h1 class="text-sm md:text-xl font-bold leading-tight md:leading-tight tracking-tight text-stone-900 dark:text-slate-100">
+                    <span class="block md:inline">Ferdighetstrening</span>
+                    <span class="md:inline"> </span>
+                    <span class="block md:inline text-blue-600 dark:text-blue-400">Derivasjon</span>
+                </h1>
             </div>
             <div class="flex items-center gap-3">
-                <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon/issues/new" target="_blank" class="px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" data-key="btn_report_issue">Tips/Feil?</a>
-                <button onclick="toggleTheme()" id="theme-toggle" class="p-2 text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" title="Toggle theme">
+                <!-- Desktop only: Tips/Feil and Theme Toggle -->
+                <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon/issues/new" target="_blank" class="hidden md:flex px-3 py-1.5 text-sm font-medium text-stone-700 dark:text-slate-300 hover:text-blue-600 dark:hover:text-blue-400 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" data-key="btn_report_issue">Tips/Feil?</a>
+                <button onclick="toggleTheme()" id="theme-toggle" class="hidden md:block p-2 text-stone-700 dark:text-slate-300 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all" title="Toggle theme">
                     <i class="fa-solid fa-sun dark-hidden"></i>
                     <i class="fa-solid fa-moon light-hidden" style="display: none;"></i>
                 </button>
-                <div class="flex space-x-2 bg-stone-100 dark:bg-slate-700 p-1 rounded-lg">
-                <button onclick="setLanguage('no')" id="btn-no" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇳🇴</button>
-                <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇬🇧</button>
-                <button onclick="setLanguage('es')" id="btn-es" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇪🇸</button>
-                <button onclick="setLanguage('uk')" id="btn-uk" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇺🇦</button>
+                <!-- Language Selector -->
+                <div class="relative">
+                    <!-- Mobile: Single Flag Button -->
+                    <button
+                        onclick="toggleLanguageDropdown()"
+                        id="current-lang-btn"
+                        class="md:hidden p-2 text-2xl hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all"
+                        aria-label="Change language"
+                        aria-expanded="false"
+                        aria-controls="lang-dropdown"
+                    >
+                        <span id="current-lang-flag">🇳🇴</span>
+                    </button>
+
+                    <!-- Desktop: 4 Flags (Original) -->
+                    <div class="hidden md:flex space-x-2 bg-stone-100 dark:bg-slate-700 p-1 rounded-lg">
+                        <button onclick="setLanguage('no')" id="btn-no" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇳🇴</button>
+                        <button onclick="setLanguage('en')" id="btn-en" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇬🇧</button>
+                        <button onclick="setLanguage('es')" id="btn-es" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇪🇸</button>
+                        <button onclick="setLanguage('uk')" id="btn-uk" class="lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all">🇺🇦</button>
+                    </div>
+
+                    <!-- Mobile: Language Dropdown (Initially Hidden) -->
+                    <div
+                        id="lang-dropdown"
+                        class="hidden md:hidden absolute right-0 top-full mt-2 w-48 bg-white dark:bg-slate-800 rounded-lg shadow-xl border border-stone-200 dark:border-slate-700 overflow-hidden z-50"
+                        role="menu"
+                        aria-label="Select language"
+                    >
+                        <button onclick="selectLanguageFromDropdown('no')" class="lang-dropdown-item w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" role="menuitem">
+                            <span class="text-xl">🇳🇴</span>
+                            <span class="font-medium text-stone-700 dark:text-slate-300">Norsk</span>
+                        </button>
+                        <button onclick="selectLanguageFromDropdown('en')" class="lang-dropdown-item w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" role="menuitem">
+                            <span class="text-xl">🇬🇧</span>
+                            <span class="font-medium text-stone-700 dark:text-slate-300">English</span>
+                        </button>
+                        <button onclick="selectLanguageFromDropdown('es')" class="lang-dropdown-item w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" role="menuitem">
+                            <span class="text-xl">🇪🇸</span>
+                            <span class="font-medium text-stone-700 dark:text-slate-300">Español</span>
+                        </button>
+                        <button onclick="selectLanguageFromDropdown('uk')" class="lang-dropdown-item w-full flex items-center gap-3 px-4 py-3 text-sm hover:bg-stone-50 dark:hover:bg-slate-700 transition-colors" role="menuitem">
+                            <span class="text-xl">🇺🇦</span>
+                            <span class="font-medium text-stone-700 dark:text-slate-300">Українська</span>
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
     </header>
+
+    <!-- Mobile Navigation Drawer -->
+    <div
+        id="mobile-nav-drawer"
+        class="fixed inset-0 z-40 md:hidden hidden"
+        role="navigation"
+        aria-label="Mobile navigation"
+    >
+        <!-- Backdrop/Overlay -->
+        <div
+            id="mobile-nav-backdrop"
+            onclick="toggleMobileNav()"
+            class="fixed inset-0 bg-black/50 dark:bg-black/70 backdrop-blur-sm transition-opacity"
+            aria-hidden="true"
+        ></div>
+
+        <!-- Slide-out Panel -->
+        <div
+            id="mobile-nav-panel"
+            class="fixed top-0 left-0 bottom-0 w-72 bg-white dark:bg-slate-800 shadow-2xl transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col"
+        >
+            <!-- Drawer Header -->
+            <div class="flex items-center justify-between p-4 border-b border-stone-200 dark:border-slate-700">
+                <div class="flex items-center gap-2">
+                    <div class="bg-blue-600 dark:bg-blue-500 text-white p-2 rounded-lg">
+                        <i class="fa-solid fa-graduation-cap"></i>
+                    </div>
+                    <h2 class="font-bold text-stone-900 dark:text-slate-100">Derivasjon</h2>
+                </div>
+                <button
+                    onclick="toggleMobileNav()"
+                    class="p-2 text-stone-500 dark:text-slate-400 hover:bg-stone-100 dark:hover:bg-slate-700 rounded-md transition-all"
+                    aria-label="Close navigation menu"
+                >
+                    <i class="fa-solid fa-xmark text-xl"></i>
+                </button>
+            </div>
+
+            <!-- Navigation Items -->
+            <nav class="flex-1 px-4 py-6 space-y-2 overflow-y-auto">
+                <button onclick="navigateToFromMobile('dashboard')" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="mobile-nav-dashboard">
+                    <i class="fa-solid fa-house w-5 text-center"></i>
+                    <span data-key="nav_dashboard">Oversikt</span>
+                </button>
+                <button onclick="navigateToFromMobile('theory')" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="mobile-nav-theory">
+                    <i class="fa-solid fa-book-open w-5 text-center"></i>
+                    <span data-key="nav_theory">Teoribank</span>
+                </button>
+                <button onclick="navigateToFromMobile('practice')" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="mobile-nav-practice">
+                    <i class="fa-solid fa-dumbbell w-5 text-center"></i>
+                    <span data-key="nav_practice">Treningsarena</span>
+                </button>
+                <button onclick="navigateToFromMobile('marked')" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="mobile-nav-marked">
+                    <i class="fa-solid fa-bookmark w-5 text-center"></i>
+                    <span data-key="nav_marked">Trenger Øving</span>
+                    <span id="mobile-marked-count-badge" class="ml-auto bg-amber-100 text-amber-700 dark:bg-amber-900/30 dark:text-amber-300 text-xs px-2 py-0.5 rounded-full hidden">0</span>
+                </button>
+                <button onclick="navigateToFromMobile('stats')" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="mobile-nav-stats">
+                    <i class="fa-solid fa-chart-simple w-5 text-center"></i>
+                    <span data-key="nav_stats">Min Statistikk</span>
+                </button>
+                <button onclick="navigateToFromMobile('help')" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors" id="mobile-nav-help">
+                    <i class="fa-solid fa-circle-question w-5 text-center"></i>
+                    <span data-key="nav_help">Hjelp</span>
+                </button>
+
+                <!-- Divider -->
+                <div class="border-t border-stone-200 dark:border-slate-700 my-4"></div>
+
+                <!-- Action Items -->
+                <button onclick="toggleTheme()" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <i class="fa-solid fa-sun dark-hidden w-5 text-center"></i>
+                    <i class="fa-solid fa-moon light-hidden w-5 text-center" style="display: none;"></i>
+                    <span class="dark-hidden" data-key="theme_light">Lyst tema</span>
+                    <span class="light-hidden" style="display: none;" data-key="theme_dark">Mørkt tema</span>
+                </button>
+                <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon/issues/new" target="_blank" class="mobile-nav-item w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-lg transition-colors">
+                    <i class="fa-solid fa-bug w-5 text-center"></i>
+                    <span data-key="btn_report_issue">Tips/Feil?</span>
+                </a>
+            </nav>
+
+            <!-- Drawer Footer -->
+            <div class="p-4 border-t border-stone-100 dark:border-slate-700">
+                <div class="flex items-center gap-2 mb-2">
+                    <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 dark:text-slate-500 hover:text-stone-600 dark:hover:text-slate-300 transition-colors" title="View on GitHub">
+                        <i class="fa-brands fa-github text-sm"></i>
+                    </a>
+                    <p class="font-mono text-xs text-stone-400 dark:text-slate-500 leading-tight">v1.2.3</p>
+                </div>
+                <p class="font-mono text-xs text-stone-500 dark:text-slate-400 leading-tight">Torodd F. Ottestad</p>
+                <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline leading-tight">lektorodd</a>
+            </div>
+        </div>
+    </div>
 
     <div class="flex flex-1 overflow-hidden">
         <!-- SIDEBAR NAVIGATION -->
@@ -141,7 +364,7 @@
                     <a href="https://github.com/lektorodd/ferdighetstrening-derivasjon" target="_blank" class="text-stone-400 dark:text-slate-500 hover:text-stone-600 dark:hover:text-slate-300 transition-colors" title="View on GitHub">
                         <i class="fa-brands fa-github text-sm"></i>
                     </a>
-                    <p class="font-mono text-xs text-stone-400 dark:text-slate-500 leading-tight">v1.2.2</p>
+                    <p class="font-mono text-xs text-stone-400 dark:text-slate-500 leading-tight">v1.2.3</p>
                 </div>
                 <p class="font-mono text-xs text-stone-500 dark:text-slate-400 leading-tight">Torodd F. Ottestad</p>
                 <a href="https://lektorodd.no" target="_blank" class="font-mono text-xs text-blue-600 dark:text-blue-400 hover:text-blue-800 dark:hover:text-blue-300 hover:underline leading-tight">lektorodd</a>

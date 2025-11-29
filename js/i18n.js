@@ -74,6 +74,8 @@ export const i18n = {
         no_problems_found: "Ingen oppgaver funnet med disse filtrene.",
         progress_cleared: "All fremgang er slettet",
         btn_report_issue: "Tips/Feil?",
+        theme_light: "Lyst tema",
+        theme_dark: "Mørkt tema",
     },
     en: {
         nav_dashboard: "Dashboard",
@@ -144,6 +146,8 @@ export const i18n = {
         no_problems_found: "No problems found with these filters.",
         progress_cleared: "All progress has been cleared",
         btn_report_issue: "Tips/Error?",
+        theme_light: "Light theme",
+        theme_dark: "Dark theme",
     },
     es: {
         nav_dashboard: "Tablero",
@@ -214,6 +218,8 @@ export const i18n = {
         no_problems_found: "No se encontraron problemas con estos filtros.",
         progress_cleared: "Todo el progreso ha sido eliminado",
         btn_report_issue: "¿Consejos/Error?",
+        theme_light: "Tema claro",
+        theme_dark: "Tema oscuro",
     },
     uk: {
         nav_dashboard: "Огляд",
@@ -284,5 +290,7 @@ export const i18n = {
         no_problems_found: "Не знайдено завдань з цими фільтрами.",
         progress_cleared: "Весь прогрес видалено",
         btn_report_issue: "Поради/Помилка?",
+        theme_light: "Світла тема",
+        theme_dark: "Темна тема",
     }
 };

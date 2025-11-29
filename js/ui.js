@@ -32,6 +32,9 @@ export function navigateTo(viewId) {
         }
     });
 
+    // Update mobile nav state as well
+    updateMobileNavState(viewId);
+
     // View Specific Logic
     if (viewId === 'theory') {
         // Ensure we have a valid theory topic selected
@@ -381,6 +384,9 @@ export function updateMarkedBadge() {
     } else {
         badge.classList.add('hidden');
     }
+
+    // Also update mobile badge
+    updateMobileMarkedBadge();
 }
 
 /**
@@ -581,6 +587,8 @@ export function setLanguage(lang) {
     state.language = lang;
     localStorage.setItem('mathTrainerLang', lang);
     updateLanguageUI();
+    updateCurrentLanguageFlag();
+    updateLanguageDropdownState();
     navigateTo(state.currentView);
 }
 
@@ -618,4 +626,226 @@ export function updateLanguageUI() {
             btn.className = "lang-btn px-3 py-1 text-sm font-medium rounded-md transition-all text-stone-400 dark:text-slate-400 hover:bg-stone-200 dark:hover:bg-slate-600";
         }
     });
+
+    // Update mobile language display
+    updateCurrentLanguageFlag();
+    updateLanguageDropdownState();
+}
+
+// ========================================
+// MOBILE NAVIGATION FUNCTIONS
+// ========================================
+
+/**
+ * Toggles the mobile navigation drawer
+ */
+export function toggleMobileNav() {
+    const drawer = document.getElementById('mobile-nav-drawer');
+    const panel = document.getElementById('mobile-nav-panel');
+    const body = document.body;
+    const toggle = document.getElementById('mobile-nav-toggle');
+
+    if (!drawer || !panel) return;
+
+    const isOpen = !drawer.classList.contains('hidden');
+
+    if (isOpen) {
+        // Close drawer
+        drawer.classList.remove('mobile-nav-open');
+        setTimeout(() => {
+            drawer.classList.add('hidden');
+            body.classList.remove('mobile-nav-open');
+        }, 300); // Wait for animation
+        if (toggle) toggle.setAttribute('aria-expanded', 'false');
+    } else {
+        // Open drawer
+        drawer.classList.remove('hidden');
+        // Force reflow to enable transition
+        drawer.offsetHeight;
+        drawer.classList.add('mobile-nav-open');
+        body.classList.add('mobile-nav-open');
+        if (toggle) toggle.setAttribute('aria-expanded', 'true');
+    }
+}
+
+/**
+ * Navigates to a view and closes mobile drawer
+ * @param {string} viewId - The view identifier
+ */
+export function navigateToFromMobile(viewId) {
+    toggleMobileNav();
+    navigateTo(viewId);
+    updateMobileNavState(viewId);
+}
+
+/**
+ * Updates mobile navigation active state
+ * @param {string} viewId - The currently active view
+ */
+export function updateMobileNavState(viewId) {
+    document.querySelectorAll('.mobile-nav-item').forEach(el => {
+        const targetView = el.id.replace('mobile-nav-', '');
+        if (targetView === viewId) {
+            el.classList.add('active');
+        } else {
+            el.classList.remove('active');
+        }
+    });
+}
+
+/**
+ * Updates mobile marked badge count
+ */
+export function updateMobileMarkedBadge() {
+    const markedCount = Object.values(state.progress).filter(status => status === 'practice').length;
+
+    // Update mobile drawer badge
+    const drawerBadge = document.getElementById('mobile-marked-count-badge');
+    if (drawerBadge) {
+        if (markedCount > 0) {
+            drawerBadge.textContent = markedCount;
+            drawerBadge.classList.remove('hidden');
+        } else {
+            drawerBadge.classList.add('hidden');
+        }
+    }
+
+    // Update hamburger menu badge
+    const hamburgerBadge = document.getElementById('hamburger-badge');
+    if (hamburgerBadge) {
+        if (markedCount > 0) {
+            hamburgerBadge.textContent = markedCount;
+            hamburgerBadge.classList.remove('hidden');
+        } else {
+            hamburgerBadge.classList.add('hidden');
+        }
+    }
+}
+
+// ========================================
+// LANGUAGE DROPDOWN FUNCTIONS
+// ========================================
+
+/**
+ * Language flag map
+ */
+const LANGUAGE_FLAGS = {
+    'no': '🇳🇴',
+    'en': '🇬🇧',
+    'es': '🇪🇸',
+    'uk': '🇺🇦'
+};
+
+/**
+ * Toggles the language dropdown menu
+ */
+export function toggleLanguageDropdown() {
+    const dropdown = document.getElementById('lang-dropdown');
+    const button = document.getElementById('current-lang-btn');
+
+    if (!dropdown || !button) return;
+
+    const isOpen = dropdown.classList.contains('lang-dropdown-show');
+
+    if (isOpen) {
+        dropdown.classList.remove('lang-dropdown-show');
+        dropdown.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('click', closeLanguageDropdownOutside);
+    } else {
+        dropdown.classList.remove('hidden');
+        dropdown.classList.add('lang-dropdown-show');
+        button.setAttribute('aria-expanded', 'true');
+
+        // Close on outside click (delayed to avoid immediate trigger)
+        setTimeout(() => {
+            document.addEventListener('click', closeLanguageDropdownOutside);
+        }, 10);
+    }
+}
+
+/**
+ * Closes language dropdown when clicking outside
+ * @param {Event} event - Click event
+ */
+function closeLanguageDropdownOutside(event) {
+    const dropdown = document.getElementById('lang-dropdown');
+    const button = document.getElementById('current-lang-btn');
+
+    if (!dropdown || !button) return;
+
+    if (!dropdown.contains(event.target) && !button.contains(event.target)) {
+        toggleLanguageDropdown();
+    }
+}
+
+/**
+ * Selects a language from the dropdown menu
+ * @param {string} lang - Language code
+ */
+export function selectLanguageFromDropdown(lang) {
+    // Close dropdown
+    const dropdown = document.getElementById('lang-dropdown');
+    const button = document.getElementById('current-lang-btn');
+    if (dropdown && button) {
+        dropdown.classList.remove('lang-dropdown-show');
+        dropdown.classList.add('hidden');
+        button.setAttribute('aria-expanded', 'false');
+        document.removeEventListener('click', closeLanguageDropdownOutside);
+    }
+
+    // Update language
+    setLanguage(lang);
+    updateCurrentLanguageFlag();
+    updateLanguageDropdownState();
+}
+
+/**
+ * Updates the current language flag in mobile view
+ */
+export function updateCurrentLanguageFlag() {
+    const flagEl = document.getElementById('current-lang-flag');
+    if (flagEl) {
+        flagEl.textContent = LANGUAGE_FLAGS[state.language] || '🇳🇴';
+    }
+}
+
+/**
+ * Updates the active state in language dropdown
+ */
+export function updateLanguageDropdownState() {
+    document.querySelectorAll('.lang-dropdown-item').forEach(item => {
+        const onclick = item.getAttribute('onclick');
+        const lang = onclick?.match(/'(\w+)'/)?.[1];
+
+        if (lang === state.language) {
+            item.classList.add('active');
+        } else {
+            item.classList.remove('active');
+        }
+    });
+}
+
+// ========================================
+// KEYBOARD NAVIGATION
+// ========================================
+
+/**
+ * Handles keyboard navigation
+ * @param {KeyboardEvent} event - Keyboard event
+ */
+export function handleKeyboardNav(event) {
+    if (event.key === 'Escape') {
+        // Close mobile nav if open
+        const drawer = document.getElementById('mobile-nav-drawer');
+        if (drawer && !drawer.classList.contains('hidden')) {
+            toggleMobileNav();
+        }
+
+        // Close language dropdown if open
+        const langDropdown = document.getElementById('lang-dropdown');
+        if (langDropdown && langDropdown.classList.contains('lang-dropdown-show')) {
+            toggleLanguageDropdown();
+        }
+    }
 }

@@ -65,7 +65,28 @@ Website: [lektorodd.no](https://lektorodd.no)
 
 ## Changelog
 
-### Version 1.2.2 (Current)
+### Version 1.2.3 (Current)
+
+Mobile UI improvements for better usability on small screens.
+
+#### Enhancements (v1.2.3)
+- **Mobile Navigation**: Added hamburger menu with slide-out drawer for mobile devices
+  - Smooth slide-in animation from left with backdrop blur
+  - All navigation items accessible on mobile (< 768px)
+  - Theme toggle and issue reporting moved into mobile menu
+- **Mobile Language Selector**: Single flag button with dropdown menu on mobile
+  - Compact design saves header space
+  - Shows current language flag, tap to select from dropdown
+- **Hamburger Badge**: Added notification counter on hamburger icon
+  - Shows count of tasks marked as "need practice"
+  - Amber badge appears at top-right of hamburger button
+  - Syncs with sidebar and drawer badges
+- **Mobile Header Optimization**: Title now stacks vertically on mobile
+  - "Ferdighetstrening" and "Derivasjon" on separate lines
+  - Improved spacing between hamburger, logo, and language selector
+- **Accessibility**: Full ARIA labels, keyboard navigation (ESC closes menus), and screen reader support
+
+### Version 1.2.2
 
 Bug fix release for answer simplification.
 
@@ -190,7 +211,8 @@ Official launch with critical bug fixes and improvements.
 
 | Version | Status | Description |
 |---------|--------|-------------|
-| 1.2.2 | Current | Bug fix for answer simplification (removes "1·" from final answers) |
+| 1.2.3 | Current | Mobile UI improvements: hamburger menu, mobile language selector, badge on hamburger |
+| 1.2.2 | Stable | Bug fix for answer simplification (removes "1·" from final answers) |
 | 1.2.1 | Stable | Real-time badge updates, emoji language flags |
 | 1.2.0 | Stable | Modular ES6 architecture refactoring |
 | 1.1.0 | Stable | Feature release with basic rules theory, nested chain rule, progressive difficulty |

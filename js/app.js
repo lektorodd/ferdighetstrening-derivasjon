@@ -26,7 +26,15 @@ import {
     clearProgress,
     setLanguage,
     updateLanguageUI,
-    updateMarkedBadge
+    updateMarkedBadge,
+    toggleMobileNav,
+    navigateToFromMobile,
+    toggleLanguageDropdown,
+    selectLanguageFromDropdown,
+    updateCurrentLanguageFlag,
+    updateLanguageDropdownState,
+    updateMobileNavState,
+    handleKeyboardNav
 } from './ui.js';
 
 /**
@@ -48,6 +56,14 @@ function init() {
     updateMarkedBadge();
     navigateTo('dashboard');
     renderChart();
+
+    // Initialize mobile UI state
+    updateCurrentLanguageFlag();
+    updateLanguageDropdownState();
+    updateMobileNavState(state.currentView);
+
+    // Add keyboard navigation listener
+    document.addEventListener('keydown', handleKeyboardNav);
 }
 
 // Expose functions to global scope for onclick handlers
@@ -69,7 +85,11 @@ window.app = {
     printMarkedProblems,
     clearProgress,
     setLanguage,
-    toggleTheme
+    toggleTheme,
+    toggleMobileNav,
+    navigateToFromMobile,
+    toggleLanguageDropdown,
+    selectLanguageFromDropdown
 };
 
 // Also expose at window level for inline onclick handlers
@@ -90,6 +110,10 @@ window.printMarkedProblems = printMarkedProblems;
 window.clearProgress = clearProgress;
 window.setLanguage = setLanguage;
 window.toggleTheme = toggleTheme;
+window.toggleMobileNav = toggleMobileNav;
+window.navigateToFromMobile = navigateToFromMobile;
+window.toggleLanguageDropdown = toggleLanguageDropdown;
+window.selectLanguageFromDropdown = selectLanguageFromDropdown;
 
 // Initialize on DOM ready
 if (document.readyState === 'loading') {
